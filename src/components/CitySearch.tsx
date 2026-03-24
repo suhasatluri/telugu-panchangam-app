@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { getCity, setCity } from "@/lib/cache";
 import type { CityInfo } from "@/lib/cache";
 
@@ -13,7 +12,6 @@ interface GeocodeResult {
 }
 
 export default function CitySearch() {
-  const router = useRouter();
   const [city, setCityState] = useState<CityInfo | null>(null);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<GeocodeResult[]>([]);
@@ -88,9 +86,9 @@ export default function CitySearch() {
       setQuery("");
       setIsOpen(false);
       setResults([]);
-      router.refresh();
+      window.location.reload();
     },
-    [router]
+    []
   );
 
   return (
