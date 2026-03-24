@@ -14,10 +14,13 @@ function parseRoute(pathname: string): {
 } {
   const parts = pathname.split("/").filter(Boolean);
   const now = new Date();
-  const year = parts[0] ? parseInt(parts[0], 10) : now.getFullYear();
-  const month = parts[1] ? parseInt(parts[1], 10) : now.getMonth() + 1;
-  const day = parts[2] ? parseInt(parts[2], 10) : now.getDate();
-  const view: View = parts.length >= 3 ? "day" : "month";
+  const parsedYear = parseInt(parts[0], 10);
+  const parsedMonth = parseInt(parts[1], 10);
+  const parsedDay = parseInt(parts[2], 10);
+  const year = isNaN(parsedYear) ? now.getFullYear() : parsedYear;
+  const month = isNaN(parsedMonth) ? now.getMonth() + 1 : parsedMonth;
+  const day = isNaN(parsedDay) ? now.getDate() : parsedDay;
+  const view: View = !isNaN(parsedDay) ? "day" : "month";
   return { year, month, day, view };
 }
 
