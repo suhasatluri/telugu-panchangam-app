@@ -79,11 +79,19 @@ export async function GET(request: NextRequest) {
 
     const data = calculateDayPanchangam(date, location);
 
-    return NextResponse.json({
-      data,
-      source: "engine" as const,
-      computedAt: new Date().toISOString(),
-    });
+    return NextResponse.json(
+      {
+        data,
+        source: "engine" as const,
+        computedAt: new Date().toISOString(),
+      },
+      {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Cache-Control": "public, max-age=86400",
+        },
+      }
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(
