@@ -25,6 +25,7 @@ function formatTimeRange(start: string, end: string): string {
 
 export default function DayDetail({ data }: DayDetailProps) {
   const [lang, setLang] = useState<Lang>("en");
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setLang(getLang());
@@ -38,10 +39,20 @@ export default function DayDetail({ data }: DayDetailProps) {
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-fade-up">
       {/* HEADER — Date + Context */}
-      <header className="text-center space-y-2">
+      <header className="text-center space-y-2 relative">
         <h1 className="font-playfair text-3xl text-text-primary">
           {data.vara[lang]} &middot; {data.date}
         </h1>
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText(window.location.href);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+          }}
+          className="absolute right-0 top-0 text-text-secondary hover:text-accent text-sm font-lora transition-colors"
+        >
+          {copied ? "\u2713 Copied!" : "Share \uD83D\uDCCB"}
+        </button>
         <div className="w-16 h-px bg-label/20 mx-auto" />
         <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-sm">
           <span className="font-noto-telugu text-text-secondary">

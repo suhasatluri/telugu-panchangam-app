@@ -27,19 +27,21 @@ No ads. No login. No subscriptions. Free forever.
 
 ## Features
 
-| Feature | Description |
-|---|---|
-| 📅 Daily Panchangam | Tithi, Nakshatra, Yoga, Karana, Vara with precise end times |
-| 🌅 Sky Timings | Sunrise, sunset, moonrise, moonset — city-specific |
-| 🌗 Moon Phases | SVG-animated phases, all 30 Tithis, illumination percentage |
-| 🗓️ Month Calendar | Venkatrama-style grid with moon phases and festival badges |
-| 🎉 Festival Tracker | 40+ Telugu and Hindu festivals — any year, any century |
-| 🕐 Muhurtam Finder | Auspicious windows within any date range |
-| ⭐ Nakshatra Finder | Janma Nakshatra from birth date, time, city — time-based only |
-| 🌍 Any City Worldwide | Sunrise-anchored timings, not Indian Standard Time |
-| 🔤 Telugu + English | Full bilingual toggle — Noto Sans Telugu throughout |
-| 📱 PWA | Installable on Android and iPhone, works offline |
-| 🔌 Public API | Free, no key required — embed in your website |
+| Feature | Status | Description |
+|---|---|---|
+| 📅 Daily Panchangam | ✅ Live | Tithi, Nakshatra, Yoga, Karana, Vara with precise end times |
+| 🌅 Sky Timings | ✅ Live | Sunrise, sunset, moonrise, moonset — city-specific |
+| 🌗 Moon Phase | ✅ Live | SVG visual, Telugu + English name, illumination % |
+| 🗓️ Month Calendar | ✅ Live | Venkatrama-style grid, moon phases, Telugu Tithi names |
+| 🙏 పితృ స్మరణ | ✅ Live | Ancestor remembrance — Amavasya and Ekadashi reminders |
+| 🕐 తిథి వార్షికం | ✅ Live | Death anniversary Tithi finder — any year |
+| 🌍 Any City | ✅ Live | Sunrise-anchored timings for any city worldwide |
+| 🔤 Telugu + English | ✅ Live | Full bilingual toggle, Noto Sans Telugu throughout |
+| 🎉 Festival Tracker | 🔲 Coming | 40+ Telugu festivals for any year, any century |
+| 🕐 Muhurtam Finder | 🔲 Coming | Auspicious windows within any date range |
+| ⭐ Nakshatra Finder | 🔲 Coming | Janma Nakshatra from birth date, time, city |
+| 📱 PWA | 🔲 Coming | Installable on Android and iPhone, works offline |
+| 🔌 Public API | 🔲 Coming | Free, no key required — embed in your website |
 
 ---
 
@@ -52,7 +54,7 @@ Visit [telugu-panchangam.pages.dev](https://telugu-panchangam.pages.dev)
 
 ```bash
 # Today's Panchangam for Melbourne
-curl "https://telugu-panchangam.pages.dev/api/panchangam?date=2026-03-23&lat=-37.8136&lng=144.9631&tz=Australia/Melbourne"
+curl "https://telugu-panchangam.pages.dev/api/panchangam?date=2026-03-25&lat=-37.8136&lng=144.9631&tz=Australia/Melbourne"
 ```
 
 Full API documentation: [API.md](API.md)
