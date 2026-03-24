@@ -1,19 +1,23 @@
+import AncestorReminder from "@/components/AncestorReminder";
+
 export default function RemindersPage() {
   return (
-    <div className="py-8 px-4 max-w-3xl mx-auto">
-      <header className="text-center space-y-2 mb-8">
-        <h1 className="font-noto-telugu text-2xl text-accent">
+    <main className="max-w-2xl mx-auto px-4 py-8">
+      <div className="text-center mb-8">
+        <h1 className="font-noto-telugu text-3xl text-accent mb-2">
           పితృ స్మరణ
         </h1>
-        <p className="font-playfair italic text-text-secondary text-sm">
+        <p className="font-playfair italic text-text-secondary text-lg mb-4">
           Ancestor Remembrance
         </p>
-        <div className="w-16 h-px bg-label/20 mx-auto" />
-      </header>
-
-      <div className="text-center text-label font-lora">
-        Coming soon — this feature is planned for a future phase.
+        <div className="w-16 h-px bg-accent mx-auto mb-6" />
+        <p className="font-lora text-text-secondary max-w-md mx-auto leading-relaxed">
+          Honour those who came before you. Set a reminder for Amavasya and
+          other sacred Tithis — we will send you a personal email so you
+          never miss a moment to pay respects.
+        </p>
       </div>
-    </div>
+      <AncestorReminder />
+    </main>
   );
 }
