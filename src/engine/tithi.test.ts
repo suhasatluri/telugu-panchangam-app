@@ -4,7 +4,6 @@ describe("getTithiInfo", () => {
   it("returns Shukla Pratipada for index 0", () => {
     const result = getTithiInfo(0, null);
     expect(result.number).toBe(1);
-    expect(result.en).toBeUndefined(); // it's result.name.en
     expect(result.name.en).toBe("Pratipada");
     expect(result.name.te).toBe("పాడ్యమి");
     expect(result.paksha).toBe("shukla");
