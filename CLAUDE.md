@@ -298,8 +298,8 @@ Key validated data points:
 ## Current Build Status
 
 ```
-Phase 1 — Engine + Validation:  [ ] In progress
-Phase 2 — Calendar UI:          [ ] Not started
+Phase 1 — Engine + Validation:  [x] Complete (75 tests, 26 Venkatrama assertions)
+Phase 2 — Calendar UI:          [x] Complete (month grid, day detail, Lotus Dawn theme)
 Phase 3 — Festivals + Muhurtam: [ ] Not started
 Phase 4 — Nakshatra + Moon:     [ ] Not started
 Phase 5 — PWA + Deploy:         [ ] Not started
