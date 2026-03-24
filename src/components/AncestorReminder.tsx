@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { getCity } from "@/lib/cache";
 import type { CityInfo } from "@/lib/cache";
+import TithiAnniversary from "./TithiAnniversary";
+
+type Tab = "monthly" | "anniversary";
 
 interface AmavasyaInfo {
   date: string;
@@ -36,6 +39,8 @@ export default function AncestorReminder() {
   const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [reminderId, setReminderId] = useState<string | null>(null);
+
+  const [activeTab, setActiveTab] = useState<Tab>("monthly");
 
   const [form, setForm] = useState<FormData>({
     name: "",
@@ -124,7 +129,35 @@ export default function AncestorReminder() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      {/* Tabs */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => setActiveTab("monthly")}
+          className={`px-4 py-2 rounded-md text-sm transition-all ${
+            activeTab === "monthly"
+              ? "bg-accent text-white font-semibold"
+              : "bg-transparent text-text-secondary hover:bg-label/10"
+          }`}
+        >
+          &#x1F311; Monthly Reminders
+        </button>
+        <button
+          onClick={() => setActiveTab("anniversary")}
+          className={`px-4 py-2 rounded-md text-sm transition-all ${
+            activeTab === "anniversary"
+              ? "bg-accent text-white font-semibold"
+              : "bg-transparent text-text-secondary hover:bg-label/10"
+          }`}
+        >
+          &#x1F64F; Tithi Anniversary
+        </button>
+      </div>
+
+      {activeTab === "anniversary" ? (
+        <TithiAnniversary />
+      ) : (
+      <div className="space-y-8">
       {/* SECTION A — Upcoming Sacred Dates */}
       <section>
         <h2 className="text-xs font-semibold uppercase tracking-wider text-label mb-4">
@@ -369,10 +402,12 @@ export default function AncestorReminder() {
             >
               {formState === "submitting"
                 ? "Setting reminder..."
-                : "&#x1F64F; Set Reminder"}
+                : "పితృ స్మరణ సెట్ చేయండి — Set Reminder"}
             </button>
           </form>
         </section>
+      )}
+    </div>
       )}
     </div>
   );

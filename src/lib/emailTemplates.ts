@@ -176,3 +176,74 @@ ${WRAPPER_END}`;
     html,
   };
 }
+
+interface AnniversaryReminderParams {
+  name: string;
+  tithi: { te: string; en: string };
+  tithiDescription: string;
+  date: string;
+  gregorianDate: string;
+  sunriseTime: string;
+  city_name: string;
+  personal_note?: string;
+  daysUntil: number;
+  yearNumber?: number;
+  unsubscribe_url: string;
+  app_url: string;
+}
+
+export function anniversaryReminderEmail(
+  params: AnniversaryReminderParams
+): { subject: string; html: string } {
+  let subject: string;
+  if (params.daysUntil === 0) {
+    subject = `నేడు తిథి వార్షికం — ${params.tithiDescription} today`;
+  } else if (params.daysUntil === 1) {
+    subject = `తిథి వార్షికం రేపు — ${params.tithiDescription} tomorrow`;
+  } else {
+    subject = `తిథి వార్షికం ${params.daysUntil} రోజుల్లో — ${params.tithiDescription} in ${params.daysUntil} days`;
+  }
+
+  const noteSection = params.personal_note
+    ? `<div style="margin:16px 0;padding:12px 16px;background:#FFF6EE;border-left:3px solid #D4A547;border-radius:4px;font-style:italic;color:#6B3010;font-size:14px">"${escapeHtml(params.personal_note)}"</div>`
+    : "";
+
+  const yearSection = params.yearNumber
+    ? `<div style="text-align:center;font-size:13px;color:#6B3010;margin:12px 0">This is the ${params.yearNumber}th year of remembrance.</div>`
+    : "";
+
+  const html = `${WRAPPER_START}
+<p style="font-size:14px;margin:0 0 16px">నమస్కారం <strong>${escapeHtml(params.name)}</strong>,</p>
+
+<div style="text-align:center;margin:20px 0">
+  <div style="font-size:28px;font-weight:700;color:#C04020">${params.tithi.te}</div>
+  <div style="font-size:15px;font-style:italic;color:#6B3010;margin-top:4px">${escapeHtml(params.tithiDescription)}</div>
+  <div style="font-size:18px;color:#1A0800;margin-top:12px;font-weight:600">${escapeHtml(params.gregorianDate)}</div>
+</div>
+
+${yearSection}
+
+<div style="background:#FFF6EE;border-radius:8px;padding:16px;text-align:center;margin:16px 0">
+  <div style="font-size:20px;margin-bottom:4px">🌅</div>
+  <div style="font-size:14px"><strong>Sunrise in ${escapeHtml(params.city_name)}:</strong> ${params.sunriseTime}</div>
+  <div style="font-size:12px;color:#8B4020;margin-top:4px;font-style:italic">Tarpan is traditionally performed at sunrise</div>
+</div>
+
+${noteSection}
+
+<div style="text-align:center;margin:24px 0;padding:16px 0;border-top:1px solid #e8d5c4;border-bottom:1px solid #e8d5c4">
+  <div style="font-size:16px;color:#1A0800">పితృ దేవతలకు నమస్కారం</div>
+  <div style="font-size:13px;color:#6B3010;font-style:italic;margin-top:6px">Those who came before us are never truly gone.</div>
+</div>
+
+<div style="text-align:center;margin:20px 0">
+  <a href="${params.app_url}" style="display:inline-block;background:#C04020;color:#fff;padding:10px 24px;border-radius:8px;text-decoration:none;font-size:14px">View Panchangam for this day →</a>
+</div>
+
+<div style="text-align:center;margin-top:20px">
+  <a href="${params.unsubscribe_url}" style="font-size:11px;color:#8B4020">Unsubscribe</a>
+</div>
+${WRAPPER_END}`;
+
+  return { subject, html };
+}

@@ -16,6 +16,15 @@ const createSchema = z.object({
   personal_note: z.string().max(300).optional(),
   remind_days_before: z.number().int().min(0).max(2),
   remind_time: z.string(),
+  reminder_type: z.enum(["amavasya", "ekadashi", "tithi_anniversary"]).optional().default("amavasya"),
+  tithi_masa_number: z.number().int().min(1).max(12).optional(),
+  tithi_paksha: z.enum(["shukla", "krishna"]).optional(),
+  tithi_number: z.number().int().min(1).max(15).optional(),
+  tithi_description: z.string().optional(),
+  origin_lat: z.number().optional(),
+  origin_lng: z.number().optional(),
+  origin_tz: z.string().optional(),
+  original_date: z.string().optional(),
 });
 
 const querySchema = z.object({
