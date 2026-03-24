@@ -95,7 +95,7 @@ export default function CalendarGrid({
               {/* Tithi name */}
               <div className="mt-0.5">
                 <span className="text-[11px] font-noto-telugu text-text-secondary leading-tight block">
-                  {lang === "te" ? day.tithi.te : day.tithi.en}
+                  {day.tithi.te}
                 </span>
               </div>
 
