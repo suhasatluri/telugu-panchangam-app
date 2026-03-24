@@ -37,11 +37,15 @@ export function getMasaInfo(
 
 /** Ritu (season) names — bilingual */
 const RITU_DATA: Record<string, BilingualName> = {
+  Vasant: { te: "వసంత ఋతువు", en: "Vasanta (Spring)" },
   Vasanta: { te: "వసంత ఋతువు", en: "Vasanta (Spring)" },
   Grishma: { te: "గ్రీష్మ ఋతువు", en: "Grishma (Summer)" },
   Varsha: { te: "వర్ష ఋతువు", en: "Varsha (Monsoon)" },
+  Sharad: { te: "శరద్ ఋతువు", en: "Sharada (Autumn)" },
   Sharada: { te: "శరద్ ఋతువు", en: "Sharada (Autumn)" },
+  Hemant: { te: "హేమంత ఋతువు", en: "Hemanta (Winter)" },
   Hemanta: { te: "హేమంత ఋతువు", en: "Hemanta (Winter)" },
+  Shishir: { te: "శిశిర ఋతువు", en: "Shishira (Late Winter)" },
   Shishira: { te: "శిశిర ఋతువు", en: "Shishira (Late Winter)" },
 };
 
