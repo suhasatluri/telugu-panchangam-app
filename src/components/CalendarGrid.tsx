@@ -80,10 +80,17 @@ export default function CalendarGrid({
             <Link
               key={day.date}
               href={`/${year}/${month}/${day.gregorianDay}`}
-              className={`min-h-[80px] p-1.5 rounded-md transition-colors border ${
-                isToday ? "border-accent border-2" : "border-transparent"
-              } ${bgClass}`}
+              className={`group relative min-h-[80px] p-1.5 rounded-md border transition-all duration-150
+                hover:-translate-y-0.5 hover:shadow-md hover:shadow-label/10 active:animate-tap
+                ${isToday ? "border-accent border-2 animate-today-pulse" : "border-transparent"} ${bgClass}`}
             >
+              {/* Hover tooltip */}
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 rounded bg-text-primary text-cream text-[10px] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                <span className="font-noto-telugu">{day.tithi.te}</span>
+                <span className="mx-1">·</span>
+                <span className="font-lora">{day.tithi.en}</span>
+              </div>
+
               {/* Top row: date + moon emoji */}
               <div className="flex justify-between items-start">
                 <span className="text-sm font-semibold text-text-primary font-lora">

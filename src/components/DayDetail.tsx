@@ -36,12 +36,13 @@ export default function DayDetail({ data }: DayDetailProps) {
   const isWaxing = data.moonPhase.phase < 0.5;
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-6 animate-fade-up">
       {/* HEADER — Date + Context */}
       <header className="text-center space-y-2">
-        <h1 className="font-playfair text-2xl text-text-primary">
+        <h1 className="font-playfair text-3xl text-text-primary">
           {data.vara[lang]} &middot; {data.date}
         </h1>
+        <div className="w-16 h-px bg-label/20 mx-auto" />
         <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-sm">
           <span className="font-noto-telugu text-text-secondary">
             {data.samvatsaram.te}
@@ -74,6 +75,7 @@ export default function DayDetail({ data }: DayDetailProps) {
             en={data.tithi.en}
             lang={lang}
             endsAt={data.tithi.endsAt}
+            delay={0}
           />
           {/* Nakshatra */}
           <AngaCard
@@ -82,7 +84,8 @@ export default function DayDetail({ data }: DayDetailProps) {
             en={data.nakshatra.en}
             lang={lang}
             endsAt={data.nakshatra.endsAt}
-            extra={`${l("nakshatra")} ${data.nakshatra.pada}`}
+            extra={`Pada ${data.nakshatra.pada}`}
+            delay={80}
           />
           {/* Yoga */}
           <AngaCard
@@ -92,6 +95,7 @@ export default function DayDetail({ data }: DayDetailProps) {
             lang={lang}
             endsAt={data.yoga.endsAt}
             highlight={!data.yoga.isAuspicious ? "danger" : undefined}
+            delay={160}
           />
           {/* Karana */}
           <AngaCard
@@ -100,6 +104,7 @@ export default function DayDetail({ data }: DayDetailProps) {
             en={data.karana.en}
             lang={lang}
             endsAt={data.karana.endsAt}
+            delay={240}
           />
           {/* Vara */}
           <AngaCard
@@ -107,6 +112,7 @@ export default function DayDetail({ data }: DayDetailProps) {
             te={data.vara.te}
             en={data.vara.en}
             lang={lang}
+            delay={320}
           />
         </div>
       </section>
@@ -117,26 +123,36 @@ export default function DayDetail({ data }: DayDetailProps) {
           {l("skyTimings")}
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <TimingCard icon="&#x1F305;" label={l("sunrise")} time={formatTime(data.sunrise)} />
-          <TimingCard icon="&#x1F307;" label={l("sunset")} time={formatTime(data.sunset)} />
-          <TimingCard icon="&#x1F319;" label={l("moonrise")} time={formatTime(data.moonrise)} />
-          <TimingCard icon="&#x1F311;" label={l("moonset")} time={formatTime(data.moonset)} />
+          <TimingCard icon="&#x1F305;" label={l("sunrise")} time={formatTime(data.sunrise)} delay={0} />
+          <TimingCard icon="&#x1F307;" label={l("sunset")} time={formatTime(data.sunset)} delay={100} />
+          <TimingCard icon="&#x1F319;" label={l("moonrise")} time={formatTime(data.moonrise)} delay={200} />
+          <TimingCard icon="&#x1F311;" label={l("moonset")} time={formatTime(data.moonset)} delay={300} />
         </div>
 
         {/* Moon Phase Visual */}
-        <div className="flex items-center justify-center gap-4 mt-4 p-3 rounded-lg bg-text-primary/[0.03]">
-          <MoonPhase
-            illumination={data.moonPhase.illuminationPercent}
-            isWaxing={isWaxing}
-            size={56}
-          />
-          <div className="text-center">
-            <div className={`text-sm ${lang === "te" ? "font-noto-telugu" : "font-lora"} text-text-primary`}>
-              {data.moonPhase[lang]}
-            </div>
-            <div className="text-xs text-text-secondary">
-              {data.moonPhase.illuminationPercent}% {l("illumination").toLowerCase()}
-            </div>
+        <div className="flex flex-col items-center gap-2 mt-4 p-4 rounded-lg bg-text-primary/[0.03]">
+          <div className="font-noto-telugu text-sm text-text-primary">
+            {data.moonPhase.te}
+          </div>
+          <div className="animate-moon-pulse">
+            <MoonPhase
+              illumination={data.moonPhase.illuminationPercent}
+              isWaxing={isWaxing}
+              size={64}
+            />
+          </div>
+          <div className="font-playfair italic text-xs text-text-secondary">
+            {data.moonPhase.en}
+          </div>
+          {/* Illumination bar */}
+          <div className="w-32 h-1.5 rounded-full bg-label/10 overflow-hidden mt-1">
+            <div
+              className="h-full rounded-full bg-accent animate-slide-in"
+              style={{ width: `${data.moonPhase.illuminationPercent}%` }}
+            />
+          </div>
+          <div className="text-[10px] text-text-secondary">
+            {data.moonPhase.illuminationPercent}%
           </div>
         </div>
       </section>
@@ -204,6 +220,7 @@ function AngaCard({
   endsAt,
   extra,
   highlight,
+  delay = 0,
 }: {
   label: string;
   te: string;
@@ -212,6 +229,7 @@ function AngaCard({
   endsAt?: string;
   extra?: string;
   highlight?: "danger" | "auspicious";
+  delay?: number;
 }) {
   const borderColor =
     highlight === "danger"
@@ -221,7 +239,12 @@ function AngaCard({
         : "border-label/10";
 
   return (
-    <div className={`p-3 rounded-lg border ${borderColor} bg-cream`}>
+    <div
+      className={`p-3 rounded-lg border ${borderColor} bg-cream cursor-pointer
+        hover:-translate-y-0.5 hover:shadow-md hover:shadow-label/10 transition-all duration-150
+        animate-fade-up`}
+      style={{ animationDelay: `${delay}ms` }}
+    >
       <div className="text-[10px] font-semibold uppercase tracking-wider text-label mb-1">
         {label}
       </div>
@@ -236,7 +259,7 @@ function AngaCard({
           {formatTime(endsAt)}
         </div>
       )}
-      {extra && !endsAt && (
+      {extra && (
         <div className="text-[10px] text-text-secondary mt-1">{extra}</div>
       )}
     </div>
@@ -248,13 +271,18 @@ function TimingCard({
   icon,
   label,
   time,
+  delay = 0,
 }: {
   icon: string;
   label: string;
   time: string;
+  delay?: number;
 }) {
   return (
-    <div className="flex items-center gap-2 p-2 rounded-lg bg-text-primary/[0.02]">
+    <div
+      className="flex items-center gap-2 p-2 rounded-lg bg-text-primary/[0.02] animate-fade-up"
+      style={{ animationDelay: `${delay}ms` }}
+    >
       <span className="text-lg">{icon}</span>
       <div>
         <div className="text-[10px] text-label uppercase">{label}</div>
@@ -277,12 +305,12 @@ function PeriodCard({
   lang: Lang;
 }) {
   return (
-    <div className="p-3 rounded-lg bg-danger/5 border border-danger/10">
+    <div className="p-3 rounded-lg bg-danger/5 border border-danger/10 border-l-4 border-l-danger">
       <div className="text-xs font-noto-telugu text-danger">{labelTe}</div>
       {lang === "en" && (
         <div className="text-[10px] text-danger/70">{label}</div>
       )}
-      <div className="text-sm font-lora text-text-primary mt-1">{time}</div>
+      <div className="text-sm font-lora text-text-primary mt-1 font-semibold">{time}</div>
     </div>
   );
 }

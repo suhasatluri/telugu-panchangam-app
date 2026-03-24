@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AppHeader from "@/components/AppHeader";
+import NavBar from "@/components/NavBar";
 
 export const metadata: Metadata = {
   title: "తెలుగు పంచాంగం — Telugu Panchangam",
@@ -35,6 +36,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased bg-cream text-text-primary font-lora min-h-screen">
         <AppHeader />
+        <NavBar />
         <main>{children}</main>
       </body>
     </html>
