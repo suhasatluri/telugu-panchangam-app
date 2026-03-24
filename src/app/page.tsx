@@ -1,12 +1,27 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    router.replace(`/${year}/${month}/${day}`);
+  }, [router]);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8">
-      <h1 className="text-4xl font-playfair text-accent mb-4">
-        తెలుగు పంచాంగం
-      </h1>
-      <p className="text-text-secondary text-lg">
-        Telugu Panchangam — Phase 1: Engine under construction
-      </p>
-    </main>
+    <div className="flex items-center justify-center min-h-[80vh]">
+      <div className="text-center space-y-3">
+        <h1 className="font-noto-telugu text-3xl text-accent">
+          తెలుగు పంచాంగం
+        </h1>
+        <p className="text-label font-lora animate-pulse">Loading...</p>
+      </div>
+    </div>
   );
 }
