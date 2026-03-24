@@ -57,6 +57,14 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 - Hover tooltips on calendar day cells (full tithi in Telugu + English)
 - API routes: /api/panchangam, /api/panchangam/month, /api/geocode
 - i18n strings for all UI labels (Telugu + English)
+- పితృ స్మరణ (Ancestor Remembrance) feature:
+  - Upcoming Amavasyas list with Mahalaya/Somavati badges
+  - Reminder form: name, email, tithi types, personal note
+  - Confirmation email via Resend (bilingual, Lotus Dawn themed)
+  - One-click unsubscribe page
+  - engine/reminders.ts: getUpcomingAmavasyas/Ekadashis
+  - emailTemplates.ts: 3 bilingual HTML email templates
+  - API: POST /api/reminders, GET /api/reminders, GET /api/reminders/unsubscribe
 - Google Fonts: Noto Sans Telugu, Playfair Display, Lora
 
 ---

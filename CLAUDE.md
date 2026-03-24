@@ -115,6 +115,8 @@ telugu-panchangam-app/
 │   │   │       ├── page.tsx     ← Month grid view
 │   │   │       └── [day]/
 │   │   │           └── page.tsx ← Day detail view
+│   │   ├── reminders/
+│   │   │   └── page.tsx         ← పితృ స్మరణ — Ancestor Remembrance
 │   │   └── api/
 │   │       ├── panchangam/
 │   │       │   └── route.ts     ← GET /api/panchangam
@@ -126,8 +128,12 @@ telugu-panchangam-app/
 │   │       │   └── route.ts     ← GET /api/geocode (proxies OpenCage)
 │   │       ├── muhurtam/
 │   │       │   └── route.ts     ← GET /api/muhurtam
-│   │       └── nakshatra/
-│   │           └── route.ts     ← GET /api/nakshatra
+│   │       ├── nakshatra/
+│   │       │   └── route.ts     ← GET /api/nakshatra
+│   │       └── reminders/
+│   │           ├── route.ts     ← GET/POST /api/reminders
+│   │           └── unsubscribe/
+│   │               └── route.ts ← GET /api/reminders/unsubscribe
 │   ├── engine/                  ← Pure TypeScript calculation core
 │   │   ├── index.ts             ← Public exports
 │   │   ├── panchangam.ts        ← Orchestrator — main entry point
@@ -140,6 +146,7 @@ telugu-panchangam-app/
 │   │   ├── masa.ts              ← Telugu lunar month + Adhika Masa
 │   │   ├── rahukalam.ts         ← Inauspicious periods
 │   │   ├── festivals.ts         ← Festival calculation engine
+│   │   ├── reminders.ts         ← Upcoming Amavasya/Ekadashi finder
 │   │   ├── moonphase.ts         ← Moon phase + illumination
 │   │   ├── sunrise.ts           ← SunCalc wrapper
 │   │   └── timezone.ts          ← Timezone utilities
@@ -152,7 +159,10 @@ telugu-panchangam-app/
 │   │   ├── NakshatraFinder.tsx
 │   │   ├── CitySearch.tsx
 │   │   ├── LanguageToggle.tsx
-│   │   └── TimeNav.tsx
+│   │   ├── TimeNav.tsx
+│   │   ├── NavBar.tsx            ← Persistent navigation bar
+│   │   ├── AppHeader.tsx         ← Sunrise gradient header
+│   │   └── AncestorReminder.tsx  ← పితృ స్మరణ reminder form + list
 │   ├── data/
 │   │   ├── samvatsaram.json     ← 60 year names TE + EN
 │   │   ├── nakshatra.json       ← 27 Nakshatra names + attributes
@@ -164,6 +174,8 @@ telugu-panchangam-app/
 │   ├── lib/
 │   │   ├── cloudflare.ts        ← D1 + KV client helpers
 │   │   ├── i18n.ts              ← All UI strings TE + EN
+│   │   ├── cache.ts             ← localStorage helpers (city, lang)
+│   │   ├── emailTemplates.ts    ← Bilingual HTML email templates
 │   │   └── constants.ts
 │   ├── hooks/
 │   │   ├── usePanchangam.ts
@@ -256,6 +268,8 @@ type TithiName = string
 OPENCAGE_API_KEY=          # City geocoding — never expose to client
 CLOUDFLARE_D1_DATABASE_ID= # D1 database binding
 CLOUDFLARE_KV_NAMESPACE=   # KV namespace binding
+RESEND_API_KEY=            # Email sending via Resend — never expose to client
+RESEND_FROM_EMAIL=         # Sender email address for reminders
 
 # Set in Cloudflare Pages dashboard for production
 # Set in wrangler.toml for local development
