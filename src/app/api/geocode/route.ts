@@ -2,6 +2,7 @@ export const runtime = "edge";
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { getEnvVar } from "@/lib/cloudflare";
 
 const querySchema = z.object({
   q: z.string().min(1, "Query is required"),
@@ -23,7 +24,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const apiKey = process.env.OPENCAGE_API_KEY;
+  const apiKey = getEnvVar("OPENCAGE_API_KEY");
   if (!apiKey) {
     return NextResponse.json(
       { error: "Geocoding service not configured", code: "ENGINE_ERROR" },

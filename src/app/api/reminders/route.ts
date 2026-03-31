@@ -5,7 +5,7 @@ import { z } from "zod";
 import { Resend } from "resend";
 import { getUpcomingAmavasyas, getUpcomingEkadashis } from "@/engine/reminders";
 import { confirmationEmail } from "@/lib/emailTemplates";
-import { getDB } from "@/lib/cloudflare";
+import { getDB, getEnvVar } from "@/lib/cloudflare";
 
 const createSchema = z.object({
   email: z.string().email(),
@@ -66,8 +66,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const fromEmail = process.env.RESEND_FROM_EMAIL;
+  const apiKey = getEnvVar("RESEND_API_KEY");
+  const fromEmail = getEnvVar("RESEND_FROM_EMAIL");
   if (!apiKey || !fromEmail) {
     return NextResponse.json(
       { error: "Email service not configured", code: "ENGINE_ERROR" },

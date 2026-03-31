@@ -28,3 +28,17 @@ export function getKV(): any | null {
     return null;
   }
 }
+
+/**
+ * Get an environment variable from Cloudflare context,
+ * falling back to process.env for local dev.
+ */
+export function getEnvVar(key: string): string | undefined {
+  try {
+    const { env } = getRequestContext();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (env as any)[key] ?? undefined;
+  } catch {
+    return process.env[key];
+  }
+}
