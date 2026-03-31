@@ -27,10 +27,15 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 - nodejs_compat_v2 compatibility flag for full Node.js API support
 - .npmrc with legacy-peer-deps=true for build compatibility
 
+### Fixed
+- API routes now read env vars via getEnvVar() (Cloudflare request context) instead of process.env
+- City search works worldwide — OPENCAGE_API_KEY secret set on CF Pages production
+- Reminders route reads RESEND_API_KEY and RESEND_FROM_EMAIL from CF context
+
 ### Changed
 - next.config.mjs: dynamic import of setupDevPlatform (dev only)
-- wrangler.toml: pages_build_output_dir added for Pages integration
-- README: live URL updated to telugu-panchangam-app.pages.dev
+- wrangler.toml: pages_build_output_dir, nodejs_compat_v2 flag
+- README + API.md: live URL updated to telugu-panchangam-app.pages.dev
 
 ---
 

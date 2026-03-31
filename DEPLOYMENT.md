@@ -58,19 +58,21 @@ wrangler kv:namespace create "PANCHANGAM_CACHE" --preview
 
 ```toml
 name = "telugu-panchangam-app"
-compatibility_date = "2024-01-01"
-compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat_v2"]
 
 [[kv_namespaces]]
 binding = "PANCHANGAM_CACHE"
 id = "YOUR_KV_NAMESPACE_ID"
-preview_id = "YOUR_PREVIEW_KV_ID"
 
 [[d1_databases]]
 binding = "PANCHANGAM_DB"
 database_name = "telugu-panchangam-db"
 database_id = "YOUR_D1_DATABASE_ID"
 ```
+
+> **Important:** `nodejs_compat_v2` is required — the app uses `node:async_hooks` (via Next.js internals) which needs full Node.js compat. The compat flag must also be set on the Pages project via the Cloudflare API or dashboard.
 
 ---
 
@@ -87,13 +89,19 @@ Edit `.env.local`:
 OPENCAGE_API_KEY=your_opencage_key_here
 ```
 
-### Production (Cloudflare Pages Dashboard)
+### Production (Cloudflare Pages Secrets)
 
-In your Cloudflare Pages project settings → Environment Variables:
+Set secrets via wrangler CLI (never the dashboard — secrets are encrypted):
 
+```bash
+npx wrangler pages secret put OPENCAGE_API_KEY --project-name=telugu-panchangam-app
+npx wrangler pages secret put RESEND_API_KEY --project-name=telugu-panchangam-app
+npx wrangler pages secret put RESEND_FROM_EMAIL --project-name=telugu-panchangam-app
 ```
-OPENCAGE_API_KEY = your_opencage_key_here
-```
+
+Each command prompts you to enter the value interactively.
+
+> **Note:** In Cloudflare Pages edge runtime, `process.env` is not available. API routes use `getEnvVar()` from `src/lib/cloudflare.ts` which reads from the Cloudflare request context.
 
 Never commit API keys to the repository. The `.env.local` file is in `.gitignore`.
 
@@ -108,7 +116,7 @@ Never commit API keys to the repository. The `.env.local` file is in `.gitignore
 3. Select your forked repository
 4. Configure build settings:
    ```
-   Build command:    npm run build
+   Build command:    npx @cloudflare/next-on-pages
    Build output dir: .vercel/output/static
    Root directory:   /
    ```
@@ -118,11 +126,13 @@ Never commit API keys to the repository. The `.env.local` file is in `.gitignore
 ### Option B — Wrangler CLI
 
 ```bash
-# Build the app
-npm run build
+# Build for Cloudflare Pages
+npm run pages:build
 
-# Deploy to Cloudflare Pages
-wrangler pages deploy .vercel/output/static --project-name=telugu-panchangam-app
+# Deploy
+npm run pages:deploy
+# Or manually:
+npx wrangler pages deploy .vercel/output/static --project-name=telugu-panchangam-app
 ```
 
 ---

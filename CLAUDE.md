@@ -52,10 +52,11 @@ Engine:         @ishubhamx/panchangam-js (MIT) + Telugu layer (our code)
 Astronomy:      suncalc — sunrise/moonrise/phase per lat/lng
 Geocoding:      OpenCage API (proxied — never expose key to client)
 Cache/DB:       Cloudflare D1 (SQLite) + Cloudflare KV
-Deployment:     Cloudflare Pages + Workers
+Adapter:        @cloudflare/next-on-pages (edge runtime)
+Deployment:     Cloudflare Pages (telugu-panchangam-app.pages.dev)
 Analytics:      Cloudflare Analytics (no cookies, no tracking scripts)
 CI/CD:          GitHub Actions → auto-deploy to Cloudflare on push to main
-Node version:   18.x
+Node version:   20.x (CI) / 24.x (local)
 Package mgr:    npm
 ```
 
@@ -171,7 +172,8 @@ telugu-panchangam-app/
 │   │   ├── TithiAnniversary.tsx  ← తిథి వార్షికం — Tithi Anniversary Finder
 │   │   ├── FestivalTracker.tsx   ← పండుగలు — Festival list + filters
 │   │   ├── MuhurtamFinder.tsx    ← ముహూర్తం — Auspicious window finder
-│   │   └── NakshatraFinder.tsx   ← జన్మ నక్షత్రం — Birth star finder
+│   │   ├── NakshatraFinder.tsx   ← జన్మ నక్షత్రం — Birth star finder
+│   │   └── ServiceWorkerRegistration.tsx ← PWA service worker loader
 │   ├── data/
 │   │   ├── samvatsaram.json     ← 60 year names TE + EN
 │   │   ├── nakshatra.json       ← 27 Nakshatra names + attributes
@@ -182,7 +184,8 @@ telugu-panchangam-app/
 │   ├── lib/
 │   │   ├── i18n.ts              ← All UI strings TE + EN
 │   │   ├── cache.ts             ← localStorage helpers (city, lang)
-│   │   └── emailTemplates.ts    ← Bilingual HTML email templates
+│   │   ├── emailTemplates.ts    ← Bilingual HTML email templates
+│   │   └── cloudflare.ts        ← getDB(), getKV(), getEnvVar() helpers
 │   ├── hooks/
 │   │   └── usePanchangam.ts
 │   └── types/                   ← (empty — types live in engine/types.ts)
@@ -191,8 +194,21 @@ telugu-panchangam-app/
 │   ├── fixtures/
 │   │   └── march2026.json       ← Reference data for March 2026
 │   └── regression.test.ts       ← Engine vs Venkatrama assertions
+├── migrations/
+│   ├── 001_initial.sql          ← panchangam_cache + geocode_cache tables
+│   └── 002_reminders.sql        ← reminders table
+├── public/
+│   ├── manifest.json            ← PWA manifest
+│   └── sw.js                    ← Service worker
+├── .github/
+│   └── workflows/
+│       ├── ci.yml               ← Test + typecheck on push/PR
+│       └── deploy.yml           ← Build + deploy to CF Pages on push to main
+├── .npmrc                       ← legacy-peer-deps=true
 ├── jest.config.js               ← Jest test configuration
-├── next.config.mjs              ← Next.js config (ESM)
+├── next.config.mjs              ← Next.js config + CF dev platform (ESM)
+├── wrangler.toml                ← Cloudflare Pages + D1 + KV config
+├── worker-configuration.d.ts    ← Generated Cloudflare Env types
 ├── tailwind.config.ts
 ├── tsconfig.json
 └── package.json
@@ -267,9 +283,17 @@ CLOUDFLARE_KV_NAMESPACE=   # KV namespace binding
 RESEND_API_KEY=            # Email sending via Resend — never expose to client
 RESEND_FROM_EMAIL=         # Sender email address for reminders
 
-# Set in Cloudflare Pages dashboard for production
-# Set in wrangler.toml for local development
+# Production: set via `npx wrangler pages secret put <KEY>`
+# Local dev: .env.local is read automatically
 ```
+
+**Important:** In Cloudflare Pages edge runtime, `process.env` is not available.
+API routes must use `getEnvVar()` from `src/lib/cloudflare.ts`:
+```typescript
+import { getEnvVar } from "@/lib/cloudflare";
+const apiKey = getEnvVar("OPENCAGE_API_KEY");
+```
+This reads from Cloudflare request context in production, falls back to `process.env` for local dev.
 
 ---
 
@@ -339,11 +363,23 @@ npm run typecheck
 # Lint
 npm run lint
 
-# Build for production
-npm run build
+# Build for Cloudflare Pages
+npm run pages:build
 
-# Deploy to Cloudflare (requires wrangler auth)
-npm run deploy
+# Preview locally (builds + runs wrangler pages dev)
+npm run pages:preview
+
+# Deploy to Cloudflare Pages (requires wrangler auth)
+npm run pages:deploy
+
+# Generate Cloudflare Env types after wrangler.toml changes
+npm run cf-typegen
+
+# Set a production secret
+npx wrangler pages secret put <KEY> --project-name=telugu-panchangam-app
+
+# Run D1 migration
+npx wrangler d1 execute telugu-panchangam-db --remote --file=./migrations/<file>.sql
 ```
 
 ---

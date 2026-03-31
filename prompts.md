@@ -500,6 +500,28 @@ STEP 14 — Update README with live URL
 
 ---
 
+### Prompt 14: Fix city search — process.env not available in edge runtime
+
+```
+Cannot find any places from the Country India in the
+place search. We need to be able to select any country
+in the world and cities and towns, USA, Canada, Europe,
+India, Asia, Srilanka, Australia, etc
+```
+
+**Diagnosis:** API routes used `process.env.OPENCAGE_API_KEY` which is always
+undefined in Cloudflare Pages edge runtime. Env vars must be read via
+`getRequestContext()` from `@cloudflare/next-on-pages`.
+
+**Fix:**
+- Added `getEnvVar()` helper to `src/lib/cloudflare.ts`
+- Updated `/api/geocode` and `/api/reminders` to use `getEnvVar()` instead of `process.env`
+- Set `OPENCAGE_API_KEY` secret on CF Pages via `npx wrangler pages secret put`
+
+**Commit:** `4ad3f99` fix: read env vars from Cloudflare context instead of process.env
+
+---
+
 ## Standing Rules
 
 These rules apply to ALL prompts in this project:
