@@ -16,6 +16,7 @@ import { getCelestialTimes } from "./sunrise";
 import { getMoonPhaseInfo } from "./moonphase";
 import { formatWithTz, getTimezoneOffsetMinutes } from "./timezone";
 import { localToUtc } from "./timezone";
+import { matchFestivalsForDay } from "./festivalMatcher";
 
 /** Telugu weekday names */
 const VARA_NAMES: BilingualName[] = [
@@ -140,7 +141,7 @@ export function calculateDayPanchangam(
     tz
   );
 
-  return {
+  const result: DayPanchangam = {
     date: dateStr,
     samvatsaram: {
       ...samvatsaramResult.name,
@@ -194,6 +195,11 @@ export function calculateDayPanchangam(
     rahukalam,
     gulikaKalam,
     yamagandam,
-    festivals: [], // Populated in Phase 3
+    festivals: [],
   };
+
+  // Match festivals for this day
+  result.festivals = matchFestivalsForDay(result);
+
+  return result;
 }

@@ -13,7 +13,7 @@ interface DaySummary {
   nakshatra: { te: string; en: string; number: number };
   paksha: "shukla" | "krishna";
   moonPhaseEmoji: string;
-  festivals: Array<{ te: string; en: string }>;
+  festivals: Array<{ te: string; en: string; tier: 1 | 2 | 3 }>;
   isEkadashi: boolean;
   isAmavasya: boolean;
   isPurnima: boolean;
@@ -106,15 +106,42 @@ export default function CalendarGrid({
                 </span>
               </div>
 
-              {/* Festival badge */}
+              {/* Festival badges */}
               {hasFestival && (
-                <div className="mt-0.5 flex items-center gap-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gold inline-block flex-shrink-0" />
-                  <span className="text-[10px] text-gold truncate font-lora">
-                    {lang === "te"
-                      ? day.festivals[0].te
-                      : day.festivals[0].en}
-                  </span>
+                <div className="mt-0.5 space-y-0.5">
+                  {day.festivals.slice(0, 2).map((f, fi) => {
+                    const dotColor =
+                      f.tier === 1
+                        ? "bg-gold"
+                        : f.tier === 2
+                          ? "bg-accent"
+                          : "bg-label/40";
+                    const textColor =
+                      f.tier === 1
+                        ? "text-gold"
+                        : f.tier === 2
+                          ? "text-accent"
+                          : "text-label";
+                    return (
+                      <div key={fi} className="flex items-center gap-0.5">
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${dotColor} inline-block flex-shrink-0`}
+                        />
+                        <span
+                          className={`text-[10px] ${textColor} truncate ${
+                            lang === "te" ? "font-noto-telugu" : "font-lora"
+                          }`}
+                        >
+                          {lang === "te" ? f.te : f.en}
+                        </span>
+                      </div>
+                    );
+                  })}
+                  {day.festivals.length > 2 && (
+                    <span className="text-[9px] text-label">
+                      +{day.festivals.length - 2}
+                    </span>
+                  )}
                 </div>
               )}
             </Link>
