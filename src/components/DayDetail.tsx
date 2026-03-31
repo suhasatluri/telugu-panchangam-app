@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { getLang } from "@/lib/cache";
 import { UI } from "@/lib/i18n";
 import MoonPhase from "./MoonPhase";
+import Tooltip from "./Tooltip";
+import { TOOLTIPS } from "@/lib/tooltips";
 import type { Lang } from "@/lib/i18n";
 import type { DayPanchangam } from "@/engine/types";
 
@@ -55,16 +57,19 @@ export default function DayDetail({ data }: DayDetailProps) {
         </button>
         <div className="w-16 h-px bg-label/20 mx-auto" />
         <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-sm">
-          <span className="font-noto-telugu text-text-secondary">
+          <span className="font-noto-telugu text-text-secondary inline-flex items-center gap-0.5">
             {data.samvatsaram.te}
+            <Tooltip content={TOOLTIPS.samvatsaram[lang]}><span className="text-label/40 text-[10px] cursor-help">&oplus;</span></Tooltip>
           </span>
           <span className="text-label">&middot;</span>
-          <span className={lang === "te" ? "font-noto-telugu text-text-secondary" : "font-playfair italic text-text-secondary"}>
+          <span className={`inline-flex items-center gap-0.5 ${lang === "te" ? "font-noto-telugu text-text-secondary" : "font-playfair italic text-text-secondary"}`}>
             {data.masa[lang]}
+            <Tooltip content={TOOLTIPS.masa[lang]}><span className="text-label/40 text-[10px] cursor-help not-italic">&oplus;</span></Tooltip>
           </span>
           <span className="text-label">&middot;</span>
-          <span className={lang === "te" ? "font-noto-telugu text-text-secondary" : "font-playfair italic text-text-secondary"}>
+          <span className={`inline-flex items-center gap-0.5 ${lang === "te" ? "font-noto-telugu text-text-secondary" : "font-playfair italic text-text-secondary"}`}>
             {data.paksha[lang]}
+            <Tooltip content={TOOLTIPS.paksha[lang]}><span className="text-label/40 text-[10px] cursor-help not-italic">&oplus;</span></Tooltip>
           </span>
           <span className="text-label">&middot;</span>
           <span className="text-text-secondary text-xs">
@@ -87,6 +92,7 @@ export default function DayDetail({ data }: DayDetailProps) {
             lang={lang}
             endsAt={data.tithi.endsAt}
             delay={0}
+            tooltip={TOOLTIPS.tithi[lang]}
           />
           {/* Nakshatra */}
           <AngaCard
@@ -97,6 +103,7 @@ export default function DayDetail({ data }: DayDetailProps) {
             endsAt={data.nakshatra.endsAt}
             extra={`Pada ${data.nakshatra.pada}`}
             delay={80}
+            tooltip={TOOLTIPS.nakshatra[lang]}
           />
           {/* Yoga */}
           <AngaCard
@@ -107,6 +114,7 @@ export default function DayDetail({ data }: DayDetailProps) {
             endsAt={data.yoga.endsAt}
             highlight={!data.yoga.isAuspicious ? "danger" : undefined}
             delay={160}
+            tooltip={TOOLTIPS.yoga[lang]}
           />
           {/* Karana */}
           <AngaCard
@@ -116,6 +124,7 @@ export default function DayDetail({ data }: DayDetailProps) {
             lang={lang}
             endsAt={data.karana.endsAt}
             delay={240}
+            tooltip={TOOLTIPS.karana[lang]}
           />
           {/* Vara */}
           <AngaCard
@@ -124,14 +133,18 @@ export default function DayDetail({ data }: DayDetailProps) {
             en={data.vara.en}
             lang={lang}
             delay={320}
+            tooltip={TOOLTIPS.vara[lang]}
           />
         </div>
       </section>
 
       {/* SKY TIMINGS */}
       <section>
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-label mb-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-label mb-3 flex items-center gap-1">
           {l("skyTimings")}
+          <Tooltip content={TOOLTIPS.sunrise[lang]} position="bottom">
+            <span className="text-label/40 cursor-help normal-case tracking-normal">&oplus;</span>
+          </Tooltip>
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <TimingCard icon="&#x1F305;" label={l("sunrise")} time={formatTime(data.sunrise)} delay={0} />
@@ -142,8 +155,11 @@ export default function DayDetail({ data }: DayDetailProps) {
 
         {/* Moon Phase Visual */}
         <div className="flex flex-col items-center gap-2 mt-4 p-4 rounded-lg bg-text-primary/[0.03]">
-          <div className="font-noto-telugu text-sm text-text-primary">
+          <div className="font-noto-telugu text-sm text-text-primary inline-flex items-center gap-1">
             {data.moonPhase.te}
+            <Tooltip content={TOOLTIPS.moonPhase[lang]}>
+              <span className="text-label/40 text-[10px] cursor-help">&oplus;</span>
+            </Tooltip>
           </div>
           <div className="animate-moon-pulse">
             <MoonPhase
@@ -172,8 +188,11 @@ export default function DayDetail({ data }: DayDetailProps) {
 
       {/* INAUSPICIOUS PERIODS */}
       <section>
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-label mb-3">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-label mb-3 flex items-center gap-1">
           {l("inauspiciousPeriods")}
+          <Tooltip content={TOOLTIPS.inauspicious[lang]} position="bottom">
+            <span className="text-label/40 cursor-help normal-case tracking-normal">&oplus;</span>
+          </Tooltip>
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <PeriodCard
@@ -181,18 +200,21 @@ export default function DayDetail({ data }: DayDetailProps) {
             labelTe={data.rahukalam.te}
             time={formatTimeRange(data.rahukalam.start, data.rahukalam.end)}
             lang={lang}
+            tooltip={TOOLTIPS.rahukalam[lang]}
           />
           <PeriodCard
             label={data.gulikaKalam[lang]}
             labelTe={data.gulikaKalam.te}
             time={formatTimeRange(data.gulikaKalam.start, data.gulikaKalam.end)}
             lang={lang}
+            tooltip={TOOLTIPS.gulika[lang]}
           />
           <PeriodCard
             label={data.yamagandam[lang]}
             labelTe={data.yamagandam.te}
             time={formatTimeRange(data.yamagandam.start, data.yamagandam.end)}
             lang={lang}
+            tooltip={TOOLTIPS.yamagandam[lang]}
           />
         </div>
       </section>
@@ -234,6 +256,7 @@ function AngaCard({
   extra,
   highlight,
   delay = 0,
+  tooltip,
 }: {
   label: string;
   te: string;
@@ -243,6 +266,7 @@ function AngaCard({
   extra?: string;
   highlight?: "danger" | "auspicious";
   delay?: number;
+  tooltip?: string;
 }) {
   const borderColor =
     highlight === "danger"
@@ -258,8 +282,13 @@ function AngaCard({
         animate-fade-up`}
       style={{ animationDelay: `${delay}ms` }}
     >
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-label mb-1">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-label mb-1 flex items-center gap-1">
         {label}
+        {tooltip && (
+          <Tooltip content={tooltip} position="bottom">
+            <span className="text-label/40 cursor-help normal-case tracking-normal">&oplus;</span>
+          </Tooltip>
+        )}
       </div>
       <div className="font-noto-telugu text-text-primary text-sm leading-snug">
         {te}
@@ -311,15 +340,24 @@ function PeriodCard({
   labelTe,
   time,
   lang,
+  tooltip,
 }: {
   label: string;
   labelTe: string;
   time: string;
   lang: Lang;
+  tooltip?: string;
 }) {
   return (
     <div className="p-3 rounded-lg bg-danger/5 border border-danger/10 border-l-4 border-l-danger">
-      <div className="text-xs font-noto-telugu text-danger">{labelTe}</div>
+      <div className="text-xs font-noto-telugu text-danger inline-flex items-center gap-1">
+        {labelTe}
+        {tooltip && (
+          <Tooltip content={tooltip} position="bottom">
+            <span className="text-danger/40 cursor-help">&oplus;</span>
+          </Tooltip>
+        )}
+      </div>
       {lang === "en" && (
         <div className="text-[10px] text-danger/70">{label}</div>
       )}

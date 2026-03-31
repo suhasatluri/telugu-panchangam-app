@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getLang } from "@/lib/cache";
 import { getWeekdayHeaders } from "@/lib/i18n";
+import Tooltip from "./Tooltip";
+import { TOOLTIPS } from "@/lib/tooltips";
 import type { Lang } from "@/lib/i18n";
 
 interface DaySummary {
@@ -54,7 +56,16 @@ export default function CalendarGrid({
             key={i}
             className={`text-center text-xs font-semibold py-2 ${lang === "te" ? "font-noto-telugu" : "font-lora"} text-label`}
           >
-            {h}
+            {i === 0 ? (
+              <span className="inline-flex items-center gap-0.5">
+                {h}
+                <Tooltip content={TOOLTIPS.calendar[lang]} position="bottom">
+                  <span className="text-label/30 cursor-help text-[10px]">&oplus;</span>
+                </Tooltip>
+              </span>
+            ) : (
+              h
+            )}
           </div>
         ))}
       </div>

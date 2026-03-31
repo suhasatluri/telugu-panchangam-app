@@ -1,11 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import LanguageToggle from "./LanguageToggle";
 import CitySearch from "./CitySearch";
+import LearnModal from "./LearnModal";
 
 export default function AppHeader() {
+  const [showLearn, setShowLearn] = useState(false);
+
   return (
+    <>
     <header className="bg-header-grad">
       <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Left: App title */}
@@ -55,7 +60,17 @@ export default function AppHeader() {
           <span className="font-noto-telugu">పితృ స్మరణ</span>
           <span className="ml-1">Reminders</span>
         </Link>
+        <span className="flex-1" />
+        <button
+          onClick={() => setShowLearn(true)}
+          className="text-white/50 hover:text-white text-xs font-lora transition-colors"
+          aria-label="What is Panchangam?"
+        >
+          ?
+        </button>
       </div>
     </header>
+    {showLearn && <LearnModal onClose={() => setShowLearn(false)} />}
+    </>
   );
 }
