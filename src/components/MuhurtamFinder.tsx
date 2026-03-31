@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import { getCity, getLang } from "@/lib/cache";
 import type { Lang } from "@/lib/i18n";
 import type { MuhurtamWindow } from "@/engine/muhurtam";
+import LoadingState from "./LoadingState";
+import ErrorState from "./ErrorState";
 
 const DAY_OPTIONS = [1, 3, 7, 14, 30];
 
@@ -63,6 +65,7 @@ export default function MuhurtamFinder() {
   const [windows, setWindows] = useState<MuhurtamWindow[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [cityName, setCityName] = useState("Melbourne");
 
   useEffect(() => {
@@ -73,17 +76,20 @@ export default function MuhurtamFinder() {
   const search = useCallback(async () => {
     setLoading(true);
     setSearched(true);
+    setFetchError(null);
     const city = getCity();
     setCityName(city.name);
     try {
       const res = await fetch(
         `/api/muhurtam?from=${fromDate}&days=${days}&lat=${city.lat}&lng=${city.lng}&tz=${encodeURIComponent(city.tz)}`
       );
+      if (!res.ok) throw new Error("Service temporarily unavailable");
       const json = await res.json();
       if (json.data) setWindows(json.data);
       else setWindows([]);
-    } catch {
+    } catch (err) {
       setWindows([]);
+      setFetchError(err instanceof Error ? err.message : "Unable to find muhurtam windows");
     }
     setLoading(false);
   }, [fromDate, days]);
@@ -166,12 +172,28 @@ export default function MuhurtamFinder() {
         </button>
       </div>
 
-      {/* Results */}
-      {searched && !loading && windows.length === 0 && (
+      {/* Loading spinner in results area */}
+      {loading && (
+        <LoadingState variant="spinner" message="Searching..." messageTe="వెతుకుతోంది..." lang={lang} />
+      )}
+
+      {/* Error */}
+      {!loading && fetchError && (
+        <ErrorState
+          title="Unable to find muhurtam"
+          titleTe="ముహూర్తం కనుగొనడం సాధ్యం కాలేదు"
+          message={fetchError}
+          onRetry={search}
+          lang={lang}
+        />
+      )}
+
+      {/* Empty results */}
+      {searched && !loading && !fetchError && windows.length === 0 && (
         <p className="text-center text-label font-lora mt-8">
           {lang === "te"
-            ? "ఈ కాలంలో శుభ ముహూర్తాలు లేవు"
-            : "No auspicious windows found in this period"}
+            ? "ఈ కాలంలో శుభ ముహూర్తాలు కనుగొనబడలేదు. వేరే తేదీ పరిధి ప్రయత్నించండి."
+            : "No auspicious windows found in this period. Try a different date range."}
         </p>
       )}
 

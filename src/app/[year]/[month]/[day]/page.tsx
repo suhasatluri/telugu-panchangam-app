@@ -2,6 +2,8 @@
 
 import { usePanchangam } from "@/hooks/usePanchangam";
 import DayDetail from "@/components/DayDetail";
+import LoadingState from "@/components/LoadingState";
+import ErrorState from "@/components/ErrorState";
 
 interface DayPageProps {
   params: { year: string; month: string; day: string };
@@ -15,18 +17,20 @@ export default function DayPage({ params }: DayPageProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-label font-lora animate-pulse">Loading...</div>
+      <div className="py-6 px-4">
+        <LoadingState variant="skeleton" />
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-danger font-lora">
-          {error ?? "Failed to load panchangam"}
-        </div>
+      <div className="py-6 px-4">
+        <ErrorState
+          message={error ?? "Failed to load Panchangam data."}
+          messageTe={error ?? "పంచాంగం డేటా లోడ్ చేయడం విఫలమైంది."}
+          onRetry={() => window.location.reload()}
+        />
       </div>
     );
   }

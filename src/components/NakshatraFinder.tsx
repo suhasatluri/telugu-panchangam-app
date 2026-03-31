@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { getCity, getLang } from "@/lib/cache";
 import type { Lang } from "@/lib/i18n";
 import type { JanmaNakshatraResult } from "@/engine/nakshatra";
+import LoadingState from "./LoadingState";
+import ErrorState from "./ErrorState";
 
 interface GeocodeResult {
   displayName: string;
@@ -67,6 +69,7 @@ export default function NakshatraFinder() {
   const [result, setResult] = useState<JanmaNakshatraResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -137,6 +140,7 @@ export default function NakshatraFinder() {
     if (!birthDate || !birthTime || !birthCity) return;
     setLoading(true);
     setSearched(true);
+    setFetchError(null);
 
     const currentCity = getCity();
     const params = new URLSearchParams({
@@ -152,11 +156,13 @@ export default function NakshatraFinder() {
 
     try {
       const res = await fetch(`/api/nakshatra?${params}`);
+      if (!res.ok) throw new Error("Service temporarily unavailable");
       const json = await res.json();
       if (json.data) setResult(json.data);
       else setResult(null);
-    } catch {
+    } catch (err) {
       setResult(null);
+      setFetchError(err instanceof Error ? err.message : "Unable to calculate nakshatra");
     }
     setLoading(false);
   }, [birthDate, birthTime, birthCity]);
@@ -280,11 +286,27 @@ export default function NakshatraFinder() {
         </button>
       </div>
 
-      {/* Results */}
-      {searched && !loading && !result && (
+      {/* Loading */}
+      {loading && (
+        <LoadingState variant="spinner" message="Calculating..." messageTe="లెక్కిస్తోంది..." lang={lang} />
+      )}
+
+      {/* Error */}
+      {!loading && fetchError && (
+        <ErrorState
+          title="Unable to calculate"
+          titleTe="లెక్కించడం సాధ్యం కాలేదు"
+          message={fetchError}
+          onRetry={search}
+          lang={lang}
+        />
+      )}
+
+      {/* No result */}
+      {searched && !loading && !fetchError && !result && (
         <p className="text-center text-label font-lora mt-8">
           {lang === "te"
-            ? "ఫలితాలు లభించలేదు"
+            ? "ఫలితాలు లభించలేదు. దయచేసి మీ వివరాలు తనిఖీ చేయండి."
             : "Could not calculate. Please check your inputs."}
         </p>
       )}

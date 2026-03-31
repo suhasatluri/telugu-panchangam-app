@@ -5,6 +5,8 @@ import { useMonth } from "@/hooks/usePanchangam";
 import { getLang } from "@/lib/cache";
 import CalendarGrid from "@/components/CalendarGrid";
 import TimeNav from "@/components/TimeNav";
+import LoadingState from "@/components/LoadingState";
+import ErrorState from "@/components/ErrorState";
 import type { Lang } from "@/lib/i18n";
 
 interface MonthPageProps {
@@ -23,25 +25,33 @@ export default function MonthPage({ params }: MonthPageProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-label font-lora animate-pulse">Loading...</div>
+      <div className="py-6 px-4 max-w-4xl mx-auto">
+        <LoadingState
+          variant="spinner"
+          message="Loading calendar..."
+          messageTe="క్యాలెండర్ లోడ్ అవుతోంది..."
+        />
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-danger font-lora">
-          {error ?? "Failed to load month data"}
-        </div>
+      <div className="py-6 px-4 max-w-4xl mx-auto">
+        <ErrorState
+          title="Unable to load calendar"
+          titleTe="క్యాలెండర్ లోడ్ చేయడం సాధ్యం కాలేదు"
+          message={error ?? "Failed to load month data."}
+          messageTe={error ?? "నెల డేటా లోడ్ చేయడం విఫలమైంది."}
+          onRetry={() => window.location.reload()}
+          lang={lang}
+        />
       </div>
     );
   }
 
   return (
     <div className="py-6 px-4 max-w-4xl mx-auto space-y-6">
-      {/* Samvatsaram + Masa header */}
       <div className="text-center space-y-1">
         <div className="font-noto-telugu text-text-secondary text-sm">
           {data.samvatsaram.te} &middot; {data.masa.te}

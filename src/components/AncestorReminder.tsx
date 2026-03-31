@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getCity } from "@/lib/cache";
 import type { CityInfo } from "@/lib/cache";
 import TithiAnniversary from "./TithiAnniversary";
+import ErrorState from "./ErrorState";
 
 type Tab = "monthly" | "anniversary";
 
@@ -36,6 +37,7 @@ export default function AncestorReminder() {
   const [city, setCity] = useState<CityInfo | null>(null);
   const [amavasyas, setAmavasyas] = useState<AmavasyaInfo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [reminderId, setReminderId] = useState<string | null>(null);
@@ -64,11 +66,16 @@ export default function AncestorReminder() {
     fetch(
       `/api/reminders?lat=${c.lat}&lng=${c.lng}&tz=${encodeURIComponent(c.tz)}&count=6`
     )
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Service temporarily unavailable");
+        return res.json();
+      })
       .then((json) => {
         if (json.data?.amavasyas) setAmavasyas(json.data.amavasyas);
       })
-      .catch(() => {})
+      .catch((err) => {
+        setFetchError(err instanceof Error ? err.message : "Unable to load upcoming dates");
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -169,10 +176,17 @@ export default function AncestorReminder() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-20 rounded-lg bg-label/5 animate-pulse"
+                className="h-20 rounded-lg skeleton"
               />
             ))}
           </div>
+        ) : fetchError ? (
+          <ErrorState
+            title="Unable to load dates"
+            titleTe="తేదీలు లోడ్ చేయడం సాధ్యం కాలేదు"
+            message={fetchError}
+            onRetry={() => window.location.reload()}
+          />
         ) : amavasyas.length === 0 ? (
           <p className="text-text-secondary text-sm font-lora">
             No upcoming Amavasyas found.

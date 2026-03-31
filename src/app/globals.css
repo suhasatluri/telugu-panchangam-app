@@ -67,3 +67,30 @@ body {
 .animate-tap {
   animation: tapPress 0.15s ease;
 }
+
+/* Loading skeleton shimmer */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(212,96,58,0.06) 25%,
+    rgba(212,96,58,0.12) 50%,
+    rgba(212,96,58,0.06) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* Spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  animation: spin 0.8s linear infinite;
+}

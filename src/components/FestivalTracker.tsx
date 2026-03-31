@@ -4,6 +4,8 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { getCity, getLang } from "@/lib/cache";
 import type { Lang } from "@/lib/i18n";
 import type { Festival } from "@/engine/types";
+import LoadingState from "./LoadingState";
+import ErrorState from "./ErrorState";
 
 type Filter = "all" | "tier1" | "regional" | "ekadashi" | "amavasya";
 
@@ -93,6 +95,7 @@ export default function FestivalTracker() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [festivals, setFestivals] = useState<Festival[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>("all");
   const [cityName, setCityName] = useState("Melbourne");
   const nextRef = useRef<HTMLDivElement>(null);
@@ -101,16 +104,19 @@ export default function FestivalTracker() {
 
   const fetchFestivals = useCallback(async (y: number) => {
     setLoading(true);
+    setFetchError(null);
     const city = getCity();
     setCityName(city.name);
     try {
       const res = await fetch(
         `/api/festivals?year=${y}&lat=${city.lat}&lng=${city.lng}&tz=${encodeURIComponent(city.tz)}`
       );
+      if (!res.ok) throw new Error("Service temporarily unavailable");
       const json = await res.json();
       if (json.data) setFestivals(json.data);
-    } catch {
+    } catch (err) {
       setFestivals([]);
+      setFetchError(err instanceof Error ? err.message : "Unable to load festivals");
     }
     setLoading(false);
   }, []);
@@ -221,9 +227,23 @@ export default function FestivalTracker() {
 
       {/* Loading */}
       {loading && (
-        <p className="text-center text-label font-lora animate-pulse">
-          {lang === "te" ? "లోడ్ అవుతోంది..." : "Loading..."}
-        </p>
+        <LoadingState
+          variant="spinner"
+          message="Loading festivals..."
+          messageTe="పండుగలు లోడ్ అవుతున్నాయి..."
+          lang={lang}
+        />
+      )}
+
+      {/* Error */}
+      {!loading && fetchError && (
+        <ErrorState
+          title="Unable to load festivals"
+          titleTe="పండుగలు లోడ్ చేయడం సాధ్యం కాలేదు"
+          message={fetchError}
+          onRetry={() => fetchFestivals(year)}
+          lang={lang}
+        />
       )}
 
       {/* Festival list grouped by month */}
