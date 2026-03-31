@@ -1,0 +1,12 @@
+name = "telugu-panchangam-app"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[kv_namespaces]]
+binding = "PANCHANGAM_CACHE"
+id = "c1d960acba07460e82be31a6ebde3bfd"
+
+[[d1_databases]]
+binding = "PANCHANGAM_DB"
+database_name = "telugu-panchangam-db"
+database_id = "2dc00a53-ceb5-4477-b8ac-6002b03ab7c4"
