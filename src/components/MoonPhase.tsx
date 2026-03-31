@@ -4,17 +4,22 @@ interface MoonPhaseProps {
   illumination: number; // 0-100
   isWaxing: boolean;
   size?: number;
+  phaseName?: { te: string; en: string };
+  lang?: "te" | "en";
 }
 
 /**
  * SVG moon phase visual component.
  * Renders the actual shape of the moon — not an emoji.
  * Dark fill #1A0800, lit fill #F5E6C8.
+ * Includes glow effect and optional phase label.
  */
 export default function MoonPhase({
   illumination,
   isWaxing,
   size = 64,
+  phaseName,
+  lang = "en",
 }: MoonPhaseProps) {
   const r = size / 2;
   const cx = r;
@@ -59,27 +64,70 @@ export default function MoonPhase({
     litPath = `${outerSweep} ${innerSweep}`;
   }
 
+  // Glow intensity: stronger at full moon, subtle otherwise
+  const glowOpacity = 0.2 + frac * 0.4;
+  const glowRadius = 4 + frac * 6;
+
+  // Height for label area
+  const labelHeight = phaseName ? 16 : 0;
+  const totalHeight = size + labelHeight;
+
   return (
     <svg
       width={size}
-      height={size}
-      viewBox={`0 0 ${size} ${size}`}
+      height={totalHeight}
+      viewBox={`0 0 ${size} ${totalHeight}`}
       aria-label={`Moon phase: ${Math.round(illumination)}% illuminated`}
     >
-      {/* Dark base circle */}
-      <circle cx={cx} cy={cy} r={r - 0.5} fill="#1A0800" />
-      {/* Lit portion */}
-      {litPath && <path d={litPath} fill="#F5E6C8" />}
-      {/* Subtle border */}
-      <circle
-        cx={cx}
-        cy={cy}
-        r={r - 0.5}
-        fill="none"
-        stroke="#8B4020"
-        strokeWidth="0.5"
-        opacity="0.3"
-      />
+      <defs>
+        <filter id={`moon-glow-${size}`} x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation={glowRadius} result="blur" />
+          <feFlood floodColor="#F5E6C8" floodOpacity={glowOpacity} result="color" />
+          <feComposite in="color" in2="blur" operator="in" result="glow" />
+          <feMerge>
+            <feMergeNode in="glow" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      <g filter={`url(#moon-glow-${size})`}>
+        {/* Dark base circle */}
+        <circle cx={cx} cy={cy} r={r - 0.5} fill="#1A0800" />
+        {/* Lit portion with smooth transition */}
+        {litPath && (
+          <path
+            d={litPath}
+            fill="#F5E6C8"
+            style={{ transition: "d 0.6s ease-in-out" }}
+          />
+        )}
+        {/* Subtle border */}
+        <circle
+          cx={cx}
+          cy={cy}
+          r={r - 0.5}
+          fill="none"
+          stroke="#8B4020"
+          strokeWidth="0.5"
+          opacity="0.3"
+        />
+      </g>
+
+      {/* Phase label */}
+      {phaseName && (
+        <text
+          x={cx}
+          y={size + 12}
+          textAnchor="middle"
+          fontSize={Math.max(8, size / 8)}
+          fill="#8B4020"
+          opacity="0.7"
+          fontFamily={lang === "te" ? "'Noto Sans Telugu', sans-serif" : "'Lora', serif"}
+        >
+          {lang === "te" ? phaseName.te : phaseName.en}
+        </text>
+      )}
     </svg>
   );
 }

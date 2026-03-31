@@ -1,6 +1,7 @@
 export { calculateDayPanchangam } from "./panchangam";
 export { getTithiInfo, isEkadashi, isAmavasya, isPurnima } from "./tithi";
-export { getNakshatraInfo } from "./nakshatra";
+export { getNakshatraInfo, getJanmaNakshatra } from "./nakshatra";
+export type { JanmaNakshatraResult, TarabalamResult } from "./nakshatra";
 export { getYogaInfo } from "./yoga";
 export { getKaranaInfo, isVishtiKarana } from "./karana";
 export { getSamvatsaram, getSamvatsaramForDate } from "./samvatsaram";
@@ -18,6 +19,9 @@ export {
   localToUtc,
   getTimezoneOffsetMinutes,
 } from "./timezone";
+export { getFestivalsForYear, getFestivalsForDate } from "./festivals";
+export { matchFestivalsForDay } from "./festivalMatcher";
+export { getMuhurtamWindows } from "./muhurtam";
 export type {
   DayPanchangam,
   BilingualName,
@@ -25,3 +29,4 @@ export type {
   Festival,
   Location,
 } from "./types";
+export type { MuhurtamWindow } from "./muhurtam";

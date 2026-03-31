@@ -37,11 +37,11 @@ No ads. No login. No subscriptions. Free forever.
 | 🕐 తిథి వార్షికం | ✅ Live | Death anniversary Tithi finder — any year |
 | 🌍 Any City | ✅ Live | Sunrise-anchored timings for any city worldwide |
 | 🔤 Telugu + English | ✅ Live | Full bilingual toggle, Noto Sans Telugu throughout |
-| 🎉 Festival Tracker | 🔲 Coming | 40+ Telugu festivals for any year, any century |
-| 🕐 Muhurtam Finder | 🔲 Coming | Auspicious windows within any date range |
-| ⭐ Nakshatra Finder | 🔲 Coming | Janma Nakshatra from birth date, time, city |
+| 🎉 Festival Tracker | ✅ Live | 40+ Telugu festivals for any year — Ugadi, Sankranti, Deepavali and more |
+| 🕐 Muhurtam Finder | ✅ Live | Auspicious windows within any date range, excluding Rahukalam |
+| ⭐ Nakshatra Finder | ✅ Live | Janma Nakshatra + Raasi + Tarabalam from birth date, time, city |
 | 📱 PWA | 🔲 Coming | Installable on Android and iPhone, works offline |
-| 🔌 Public API | 🔲 Coming | Free, no key required — embed in your website |
+| 🔌 Public API | ✅ Live | Free, no key required — 7 endpoints, embed in your website |
 
 ---
 

@@ -150,6 +150,8 @@ export default function DayDetail({ data }: DayDetailProps) {
               illumination={data.moonPhase.illuminationPercent}
               isWaxing={isWaxing}
               size={64}
+              phaseName={{ te: data.moonPhase.te, en: data.moonPhase.en }}
+              lang={lang}
             />
           </div>
           <div className="font-playfair italic text-xs text-text-secondary">

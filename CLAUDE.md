@@ -99,11 +99,10 @@ telugu-panchangam-app/
 ├── DEPLOYMENT.md
 ├── CONTRIBUTING.md
 ├── CHANGELOG.md
-├── CODE_OF_CONDUCT.md
-├── LICENSE
+├── prompts.md                   ← Claude Code prompts used in development
 ├── decisions/                   ← Architecture Decision Records
 │   ├── 001-calculation-engine.md
-│   ├── 002-cloudflare-d1-vs-supabase.md
+│   ├── 002-cloudflare-d1-not-supabase.md
 │   ├── 003-open-api-no-keys.md
 │   └── 004-lotus-dawn-theme.md
 ├── src/
@@ -117,6 +116,12 @@ telugu-panchangam-app/
 │   │   │           └── page.tsx ← Day detail view
 │   │   ├── reminders/
 │   │   │   └── page.tsx         ← పితృ స్మరణ — Ancestor Remembrance
+│   │   ├── festivals/
+│   │   │   └── page.tsx         ← పండుగలు — Festival Tracker
+│   │   ├── muhurtam/
+│   │   │   └── page.tsx         ← ముహూర్తం — Muhurtam Finder
+│   │   ├── nakshatra/
+│   │   │   └── page.tsx         ← జన్మ నక్షత్రం — Nakshatra Finder
 │   │   └── api/
 │   │       ├── panchangam/
 │   │       │   └── route.ts     ← GET /api/panchangam
@@ -124,12 +129,12 @@ telugu-panchangam-app/
 │   │       │   └── route.ts     ← GET /api/panchangam/month
 │   │       ├── festivals/
 │   │       │   └── route.ts     ← GET /api/festivals
-│   │       ├── geocode/
-│   │       │   └── route.ts     ← GET /api/geocode (proxies OpenCage)
 │   │       ├── muhurtam/
 │   │       │   └── route.ts     ← GET /api/muhurtam
 │   │       ├── nakshatra/
 │   │       │   └── route.ts     ← GET /api/nakshatra
+│   │       ├── geocode/
+│   │       │   └── route.ts     ← GET /api/geocode (proxies OpenCage)
 │   │       └── reminders/
 │   │           ├── route.ts     ← GET/POST /api/reminders
 │   │           └── unsubscribe/
@@ -145,58 +150,49 @@ telugu-panchangam-app/
 │   │   ├── samvatsaram.ts       ← 60-year Telugu year cycle
 │   │   ├── masa.ts              ← Telugu lunar month + Adhika Masa
 │   │   ├── rahukalam.ts         ← Inauspicious periods
-│   │   ├── festivals.ts         ← Festival calculation engine
 │   │   ├── reminders.ts         ← Upcoming Amavasya/Ekadashi finder
+│   │   ├── festivals.ts         ← Full-year festival calculation engine
+│   │   ├── festivalMatcher.ts   ← Per-day festival matcher (used by panchangam.ts)
+│   │   ├── muhurtam.ts          ← Auspicious time window calculator
 │   │   ├── moonphase.ts         ← Moon phase + illumination
 │   │   ├── sunrise.ts           ← SunCalc wrapper
-│   │   └── timezone.ts          ← Timezone utilities
+│   │   ├── timezone.ts          ← Timezone utilities
+│   │   └── types.ts             ← Engine-specific TypeScript types
 │   ├── components/
 │   │   ├── CalendarGrid.tsx
 │   │   ├── DayDetail.tsx
 │   │   ├── MoonPhase.tsx        ← SVG animated moon
-│   │   ├── FestivalBadge.tsx
-│   │   ├── MuhurtamFinder.tsx
-│   │   ├── NakshatraFinder.tsx
 │   │   ├── CitySearch.tsx
 │   │   ├── LanguageToggle.tsx
 │   │   ├── TimeNav.tsx
 │   │   ├── NavBar.tsx            ← Persistent navigation bar
 │   │   ├── AppHeader.tsx         ← Sunrise gradient header
-│   │   └── AncestorReminder.tsx  ← పితృ స్మరణ reminder form + list
+│   │   ├── AncestorReminder.tsx  ← పితృ స్మరణ reminder form + list
+│   │   ├── TithiAnniversary.tsx  ← తిథి వార్షికం — Tithi Anniversary Finder
+│   │   ├── FestivalTracker.tsx   ← పండుగలు — Festival list + filters
+│   │   ├── MuhurtamFinder.tsx    ← ముహూర్తం — Auspicious window finder
+│   │   └── NakshatraFinder.tsx   ← జన్మ నక్షత్రం — Birth star finder
 │   ├── data/
 │   │   ├── samvatsaram.json     ← 60 year names TE + EN
 │   │   ├── nakshatra.json       ← 27 Nakshatra names + attributes
 │   │   ├── tithi.json           ← 30 Tithi names TE + EN
 │   │   ├── yoga.json            ← 27 Yoga names TE + EN
 │   │   ├── karana.json          ← 11 Karana names TE + EN
-│   │   ├── masa.json            ← 12 Masa names TE + EN
-│   │   └── festivals.json       ← Festival rules lookup table
+│   │   └── masa.json            ← 12 Masa names TE + EN
 │   ├── lib/
-│   │   ├── cloudflare.ts        ← D1 + KV client helpers
 │   │   ├── i18n.ts              ← All UI strings TE + EN
 │   │   ├── cache.ts             ← localStorage helpers (city, lang)
-│   │   ├── emailTemplates.ts    ← Bilingual HTML email templates
-│   │   └── constants.ts
+│   │   └── emailTemplates.ts    ← Bilingual HTML email templates
 │   ├── hooks/
-│   │   ├── usePanchangam.ts
-│   │   └── useLocation.ts
-│   └── types/
-│       └── index.ts             ← All shared TypeScript types
+│   │   └── usePanchangam.ts
+│   └── types/                   ← (empty — types live in engine/types.ts)
 ├── validation/
-│   ├── README.md                ← How validation works
-│   ├── venkatrama/              ← Reference calendar images
-│   │   ├── 2026-01-january.jpg
-│   │   ├── 2026-02-february.jpg
-│   │   ├── 2026-03-march.jpg
-│   │   ├── 2026-04-april.jpg
-│   │   ├── 2026-05-may.jpg
-│   │   └── 2026-06-june.jpg
+│   ├── check-output.ts          ← Engine output checker
+│   ├── fixtures/
+│   │   └── march2026.json       ← Reference data for March 2026
 │   └── regression.test.ts       ← Engine vs Venkatrama assertions
-├── public/
-│   ├── manifest.json            ← PWA manifest
-│   └── sw.js                    ← Service worker
-├── wrangler.toml                ← Cloudflare Pages config
-├── next.config.ts
+├── jest.config.js               ← Jest test configuration
+├── next.config.mjs              ← Next.js config (ESM)
 ├── tailwind.config.ts
 ├── tsconfig.json
 └── package.json
@@ -285,7 +281,7 @@ Full rationale in `decisions/` folder. Summary:
 |---|---|---|
 | Calculation engine | @ishubhamx/panchangam-js + Telugu layer | MIT, 100% accuracy verified |
 | No external Panchangam API | Pure JS engine | Works any date — no rate limits, free |
-| Database | Cloudflare D1 + KV | Same edge network, ~2ms vs ~80ms |
+| Database | Cloudflare D1 + KV | Same edge network, ~2ms vs ~80ms (see 002-cloudflare-d1-not-supabase.md) |
 | Deployment | Cloudflare Pages | Free, unlimited bandwidth, global |
 | API access | Open, no keys | Mission: free for the people |
 | Analytics | Cloudflare Analytics | Free, no cookies, no tracking |
@@ -314,9 +310,11 @@ Key validated data points:
 ```
 Phase 1 — Engine + Validation:  [x] Complete (75 tests, 26 Venkatrama assertions)
 Phase 2 — Calendar UI:          [x] Complete (month grid, day detail, Lotus Dawn theme)
-Phase 3 — Festivals + Muhurtam: [ ] Not started
-Phase 4 — Nakshatra + Moon:     [ ] Not started
-Phase 5 — PWA + Deploy:         [ ] Not started
+Phase 2.5 — Tithi Anniversary:  [x] Complete (తిథి వార్షికం finder)
+Phase 2.5 — Ancestor Reminders: [x] Complete (పితృ స్మరణ with email notifications)
+Phase 3 — Festivals + Muhurtam: [x] Complete (festival engine, muhurtam finder, calendar badges, API routes)
+Phase 4 — Nakshatra + Moon:     [x] Complete (Janma Nakshatra finder, Tarabalam, Raasi, MoonPhase glow)
+Phase 5 — PWA + Deploy:         [ ] Not started (will add public/manifest.json, sw.js)
 ```
 
 Update this section after each phase completes.

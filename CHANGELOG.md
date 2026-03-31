@@ -16,24 +16,36 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [0.4.0] — Planned: Phase 4
+## [0.4.0] — 2026-03-31: Phase 4
 
 ### Added
-- Nakshatra Finder — Janma Nakshatra and Raasi from birth date/time/city
-- Tarabalam indicator (Auspicious / Neutral / Inauspicious)
+- Nakshatra Finder — Janma Nakshatra from exact birth date, time, and city
+- Raasi (zodiac sign) mapping for all 27 Nakshatras × 4 Padas
+- Tarabalam daily indicator (9 Tara qualities: Janma through Parama Mitra)
+- `/api/nakshatra` API route with zod validation + disclaimer
+- `/nakshatra` page with birth details form, 3-card result layout
+- MoonPhase SVG enhanced with glow filter (intensity scales with illumination)
+- MoonPhase now supports bilingual phase label below the moon visual
+- Nakshatra link added to AppHeader quick links
 
 ---
 
-## [0.3.0] — Planned: Phase 3
+## [0.3.0] — 2026-03-31: Phase 3
 
 ### Added
-- Festival Tracker — full year view for any year — no limit
-- Festival countdown — days until next festival
-- Muhurtam Finder — auspicious window search within date range
-- Tier 1 festivals: all 16 major Telugu festivals, algorithmically calculated
-- Tier 2 festivals: Telangana and AP regional festivals
-- Tier 3 festivals: National fixed-date observances
-- Adhika Masa (intercalary month) detection and labelling
+- Festival engine — `getFestivalsForYear()` scans all 365 days of any year
+- Per-day festival matcher — `matchFestivalsForDay()` wired into `calculateDayPanchangam()`
+- Tier 1 festivals: Ugadi, Sri Rama Navami, Hanuman Jayanti, Sankranti cluster, Sivaratri, Krishna Janmashtami, Vinayaka Chaturthi, Vijayadasami, Deepavali, Karthika Purnima, Holi, Akshaya Tritiya, Varalakshmi Vratam, all Ekadashis/Amavasyas/Purnimas
+- Tier 2 festivals: Bathukamma (9-day), Bonalu, Karthika Somavaram, Nagula Chavithi
+- Tier 3 festivals: Republic Day, Independence Day, Gandhi Jayanti, Telangana/AP Formation Days, Christmas
+- Next-tithi matching for Ugadi (March 19) and Maha Sivaratri (Feb 15) — matches Venkatrama
+- Festival badges on CalendarGrid — tiered colour dots (gold/accent/muted) with overflow count
+- `/festivals` page — year nav, filter pills (All/Major/Regional/Ekadashi/Amavasya), next festival banner
+- `/api/festivals` API route
+- Muhurtam engine — `getMuhurtamWindows()` with Nakshatra/Yoga/Tithi quality rules, Rahukalam/Yamagandam exclusion
+- `/muhurtam` page — date picker, day range selector, quality-badged window cards
+- `/api/muhurtam` API route
+- Festival + Muhurtam + Reminders quick links added to AppHeader
 
 ---
 

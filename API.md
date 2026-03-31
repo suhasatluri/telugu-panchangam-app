@@ -282,7 +282,7 @@ Returns all festivals for a given year.
 ### Request
 
 ```
-GET /api/festivals?year={year}&lang={lang}
+GET /api/festivals?year={year}&lat={lat}&lng={lng}&tz={tz}
 ```
 
 ### Parameters
@@ -290,13 +290,14 @@ GET /api/festivals?year={year}&lang={lang}
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `year` | number | Yes | Gregorian year: `2026` |
-| `lang` | string | No | `te`, `en`, or `both` |
-| `tier` | number | No | `1`, `2`, or `3` to filter by tier |
+| `lat` | number | Yes | Latitude |
+| `lng` | number | Yes | Longitude |
+| `tz` | string | Yes | IANA timezone |
 
 ### Example Request
 
 ```
-GET /api/festivals?year=2026&lang=both
+GET /api/festivals?year=2026&lat=17.385&lng=78.486&tz=Asia/Kolkata
 ```
 
 ### Example Response
@@ -444,7 +445,7 @@ Returns Janma Nakshatra from birth details.
 ### Request
 
 ```
-GET /api/nakshatra?date={date}&time={time}&lat={lat}&lng={lng}&tz={tz}&todayLat={lat}&todayLng={lng}&todayTz={tz}
+GET /api/nakshatra?date={date}&time={time}&lat={lat}&lng={lng}&tz={tz}&today_lat={lat}&today_lng={lng}&today_tz={tz}
 ```
 
 ### Parameters
@@ -456,9 +457,9 @@ GET /api/nakshatra?date={date}&time={time}&lat={lat}&lng={lng}&tz={tz}&todayLat=
 | `lat` | number | Yes | Birth place latitude |
 | `lng` | number | Yes | Birth place longitude |
 | `tz` | string | Yes | Birth place timezone |
-| `todayLat` | number | No | Current location lat (for Tarabalam) |
-| `todayLng` | number | No | Current location lng (for Tarabalam) |
-| `todayTz` | string | No | Current timezone (for Tarabalam) |
+| `today_lat` | number | No | Current location lat (for Tarabalam) |
+| `today_lng` | number | No | Current location lng (for Tarabalam) |
+| `today_tz` | string | No | Current timezone (for Tarabalam) |
 
 ### Example Response
 
