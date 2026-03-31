@@ -309,6 +309,197 @@ UPDATE: src/app/reminders/page.tsx
 
 ---
 
+### Prompt 9: తిథి వార్షికం — Tithi Anniversary Finder
+
+```
+Read CLAUDE.md. GOLDEN RULE: Read all existing files first.
+Only add what is missing. Minimum changes only.
+
+Build the Tithi Anniversary Finder feature:
+
+CREATE: TithiIdentity, AnniversaryOccurrence types
+  in src/engine/reminders.ts
+
+CREATE: getTithiForDate() — returns the Tithi identity
+  (masa, paksha, tithi) for a given date
+
+CREATE: findTithiAnniversaries() — finds when a specific
+  Tithi falls across multiple years
+
+CREATE: src/components/TithiAnniversary.tsx
+  Form: date input + birth city (geocode typeahead)
+  Results: table of next 10 years showing
+  Gregorian date + Telugu date for each occurrence
+
+CREATE: src/app/api/reminders/anniversary/route.ts
+  GET endpoint with zod validation
+
+UPDATE: src/components/AncestorReminder.tsx
+  Add TithiAnniversary section below existing content
+```
+
+**Commit:** `e09122a` feat: తిథి వార్షికం — Tithi Anniversary Finder
+
+---
+
+## Phase 3 — Festivals + Muhurtam
+
+### Prompt 10: Full Phase 3 build
+
+```
+Read CLAUDE.md. GOLDEN RULE: Read all existing files before
+changing anything. Only add what is missing. Minimum changes
+to existing files. Do not break what already works.
+
+Run diagnostics first: npm run test, npm run typecheck
+
+We are building Phase 3: Festival Tracker + Muhurtam Finder.
+
+STEP 1 — Festival engine (src/engine/festivals.ts)
+  getFestivalsForYear(year, lat, lng, tz): Festival[]
+  Tier 1 lunar: Ugadi, Rama Navami, Sivaratri, etc
+  Tier 1 solar: Sankranti cluster
+  Tier 2 regional: Bathukamma, Bonalu
+  Tier 3 fixed: Republic Day, Independence Day
+  Walk day by day, match against rules
+
+STEP 2 — Festival API (GET /api/festivals)
+
+STEP 3 — Festival badges on CalendarGrid
+  Per-day matcher wired into calculateDayPanchangam()
+  Tiered badge dots (gold/accent/muted)
+
+STEP 4 — Festival Tracker page (/festivals)
+  Year nav, filter pills, month grouping, next festival banner
+
+STEP 5 — Muhurtam engine (src/engine/muhurtam.ts)
+  getMuhurtamWindows(from, days, lat, lng, tz)
+  Auspicious rules based on Nakshatra, Yoga, Tithi
+  Exclude Rahukalam and Yamagandam
+
+STEP 6 — Muhurtam API (GET /api/muhurtam)
+
+STEP 7 — Muhurtam Finder page (/muhurtam)
+
+STEP 8 — Add to NavBar (festivals + muhurtam links)
+
+STEP 9 — Tests for both engines
+```
+
+**Commits:**
+- `236d0ee` feat: పండుగలు + ముహూర్తం — Phase 3 Festival Tracker & Muhurtam Finder
+- `fe9e5d1` (Phase 4 commit also updated docs)
+
+---
+
+## Phase 4 — Nakshatra + Moon
+
+### Prompt 11: Full Phase 4 build
+
+```
+Read CLAUDE.md. GOLDEN RULE: Read all existing files first.
+Only add what is missing. Minimum changes only.
+
+Run diagnostics first: npm run test, npm run typecheck
+
+We are building Phase 4: Nakshatra Finder + Moon animation.
+
+STEP 1 — Nakshatra engine additions (src/engine/nakshatra.ts)
+  getJanmaNakshatra(birthDate, birthTime, lat, lng, tz, ...)
+  JanmaNakshatraResult with nakshatra, pada, raasi, deity
+  TarabalamResult with 9 Tara qualities
+  Raasi mapping: 27 Nakshatras × 4 Padas → 12 Raasis
+
+STEP 2 — Nakshatra API (GET /api/nakshatra)
+  Birth date/time/city + optional today params for Tarabalam
+
+STEP 3 — NakshatraFinder UI (/nakshatra)
+  Birth details form, 3-card results, disclaimer
+
+STEP 4 — Enhance MoonPhase SVG
+  Glow filter, phase label, lang prop
+
+STEP 5 — Add Nakshatra link to AppHeader
+
+STEP 6 — Tests for getJanmaNakshatra
+```
+
+**Commit:** `fe9e5d1` feat: జన్మ నక్షత్రం — Phase 4 Nakshatra Finder + Moon animation
+
+---
+
+### Prompt 12: D1 migrations + wrangler config
+
+```
+Read CLAUDE.md. GOLDEN RULE: Read all existing files first.
+Only change what needs to change. Minimum edits only.
+
+Update wrangler.toml with real Cloudflare resource IDs:
+  D1 database_id: 2dc00a53-ceb5-4477-b8ac-6002b03ab7c4
+  KV namespace id: c1d960acba07460e82be31a6ebde3bfd
+
+Run D1 migrations:
+  migrations/001_initial.sql — panchangam_cache, geocode_cache
+  migrations/002_reminders.sql — reminders table
+
+Verify all 3 tables exist in remote D1.
+```
+
+**Commit:** `6806a67` config: add Cloudflare D1 and KV resource IDs
+
+---
+
+## Phase 5 — PWA + Cloudflare Deployment
+
+### Prompt 13: Full Phase 5 build
+
+```
+Read CLAUDE.md. GOLDEN RULE: Read all existing files first.
+Only add what is missing. Minimum changes only.
+
+Run diagnostics first.
+
+We are building Phase 5: PWA + Cloudflare deployment.
+This is the final phase. The app goes live.
+
+STEP 1 — Install @cloudflare/next-on-pages adapter
+  Update next.config.mjs for CF Pages compatibility
+
+STEP 2 — Update package.json scripts
+  pages:build, pages:preview, pages:deploy, cf-typegen
+
+STEP 3 — Generate Cloudflare runtime types
+  npx wrangler types
+
+STEP 4 — Update API routes for Cloudflare runtime
+  export const runtime = 'edge' on ALL API routes
+  D1 caching in /api/panchangam
+  D1 persistence in /api/reminders POST
+  src/lib/cloudflare.ts: getDB(), getKV() helpers
+
+STEP 5 — PWA manifest + service worker
+  public/manifest.json, public/sw.js
+
+STEP 6 — Update layout.tsx for PWA
+  Meta tags + ServiceWorkerRegistration component
+
+STEP 7 — GitHub Actions deploy workflow
+  .github/workflows/deploy.yml
+
+STEP 8 — Create Cloudflare Pages project
+STEP 9 — Test build locally
+STEP 10 — First deployment
+STEP 11 — Set production environment variables
+STEP 12 — Bind D1 and KV to Pages project
+STEP 13 — Verify deployment
+STEP 14 — Update README with live URL
+```
+
+**Commit:** `346f37c` feat: Phase 5 complete — PWA + Cloudflare Pages deployment
+**Live at:** https://telugu-panchangam-app.pages.dev
+
+---
+
 ## Standing Rules
 
 These rules apply to ALL prompts in this project:
