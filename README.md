@@ -6,10 +6,10 @@
 *Visual. Time-based. Free forever. For the community.*
 
 [![MIT Licence](https://img.shields.io/badge/licence-MIT-orange.svg)](LICENSE)
-[![Cloudflare Pages](https://img.shields.io/badge/deployed-Cloudflare%20Pages-orange)](https://telugu-panchangam.pages.dev)
+[![Cloudflare Pages](https://img.shields.io/badge/deployed-Cloudflare%20Pages-orange)](https://telugu-panchangam-app.pages.dev)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-**[Live App](https://telugu-panchangam.pages.dev)** · **[API Docs](API.md)** · **[Report a Bug](https://github.com/suhasatluri/telugu-panchangam-app/issues)**
+**[Live App](https://telugu-panchangam-app.pages.dev)** · **[API Docs](API.md)** · **[Report a Bug](https://github.com/suhasatluri/telugu-panchangam-app/issues)**
 
 </div>
 
@@ -48,13 +48,13 @@ No ads. No login. No subscriptions. Free forever.
 ## Quick Start
 
 ### Use the App
-Visit [telugu-panchangam.pages.dev](https://telugu-panchangam.pages.dev)
+Visit [telugu-panchangam.pages.dev](https://telugu-panchangam-app.pages.dev)
 
 ### Use the API
 
 ```bash
 # Today's Panchangam for Melbourne
-curl "https://telugu-panchangam.pages.dev/api/panchangam?date=2026-03-25&lat=-37.8136&lng=144.9631&tz=Australia/Melbourne"
+curl "https://telugu-panchangam-app.pages.dev/api/panchangam?date=2026-03-31&lat=-37.8136&lng=144.9631&tz=Australia/Melbourne"
 ```
 
 Full API documentation: [API.md](API.md)

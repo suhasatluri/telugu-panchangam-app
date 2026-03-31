@@ -1,8 +1,11 @@
+export const runtime = "edge";
+
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { Resend } from "resend";
 import { getUpcomingAmavasyas, getUpcomingEkadashis } from "@/engine/reminders";
 import { confirmationEmail } from "@/lib/emailTemplates";
+import { getDB } from "@/lib/cloudflare";
 
 const createSchema = z.object({
   email: z.string().email(),
@@ -94,6 +97,37 @@ export async function POST(request: NextRequest) {
       subject: template.subject,
       html: template.html,
     });
+
+    // Persist reminder to D1
+    const db = getDB();
+    if (db) {
+      db.prepare(
+        `INSERT INTO reminders
+         (id, email, name, city_name, lat, lng, tz, tithi_types, custom_tithi,
+          personal_note, remind_days_before, remind_time, reminder_type,
+          unsubscribe_token, created_at)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+      )
+        .bind(
+          id,
+          parsed.data.email,
+          parsed.data.name,
+          parsed.data.city_name,
+          parsed.data.lat,
+          parsed.data.lng,
+          parsed.data.tz,
+          JSON.stringify(parsed.data.tithi_types),
+          parsed.data.custom_tithi ?? null,
+          parsed.data.personal_note ?? null,
+          parsed.data.remind_days_before,
+          parsed.data.remind_time,
+          parsed.data.reminder_type,
+          unsubscribe_token,
+          new Date().toISOString()
+        )
+        .run()
+        .catch(() => {});
+    }
 
     return NextResponse.json(
       {

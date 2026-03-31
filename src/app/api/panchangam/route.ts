@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { calculateDayPanchangam } from "@/engine/panchangam";
+import { getDB } from "@/lib/cloudflare";
 import type { Location } from "@/engine/types";
+
+export const runtime = "edge";
 
 const querySchema = z.object({
   date: z
@@ -74,10 +77,47 @@ export async function GET(request: NextRequest) {
       tz,
     };
 
-    // TODO Phase 2: Check Cloudflare D1/KV cache before computing
-    // const cacheKey = `panchangam:${date}:${location.lat}:${location.lng}:${tz}`;
+    const cacheKey = `panchangam:${date}:${location.lat}:${location.lng}:${tz}`;
+    const headers = {
+      "Access-Control-Allow-Origin": "*",
+      "Cache-Control": "public, max-age=86400",
+    };
+
+    // Check D1 cache
+    const db = getDB();
+    if (db) {
+      try {
+        const cached = await db
+          .prepare("SELECT data FROM panchangam_cache WHERE cache_key = ?")
+          .bind(cacheKey)
+          .first();
+
+        if (cached) {
+          return NextResponse.json(
+            {
+              data: JSON.parse(cached.data),
+              source: "cache" as const,
+              computedAt: new Date().toISOString(),
+            },
+            { headers }
+          );
+        }
+      } catch {
+        // Cache miss or error — proceed to compute
+      }
+    }
 
     const data = calculateDayPanchangam(date, location);
+
+    // Store in D1 cache (fire and forget)
+    if (db) {
+      db.prepare(
+        "INSERT OR REPLACE INTO panchangam_cache (cache_key, data, created_at) VALUES (?, ?, ?)"
+      )
+        .bind(cacheKey, JSON.stringify(data), new Date().toISOString())
+        .run()
+        .catch(() => {});
+    }
 
     return NextResponse.json(
       {
@@ -85,12 +125,7 @@ export async function GET(request: NextRequest) {
         source: "engine" as const,
         computedAt: new Date().toISOString(),
       },
-      {
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Cache-Control": "public, max-age=86400",
-        },
-      }
+      { headers }
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";

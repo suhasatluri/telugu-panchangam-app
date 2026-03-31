@@ -1,6 +1,6 @@
 # API Reference — Telugu Panchangam App
 
-> **Base URL:** `https://telugu-panchangam.pages.dev/api`
+> **Base URL:** `https://telugu-panchangam-app.pages.dev/api`
 > **Version:** v1
 > **Authentication:** None required
 > **Rate Limit:** 100 requests per minute per IP (enforced by Cloudflare)
@@ -563,7 +563,7 @@ interface Festival {
 
 ```javascript
 const response = await fetch(
-  'https://telugu-panchangam.pages.dev/api/panchangam' +
+  'https://telugu-panchangam-app.pages.dev/api/panchangam' +
   '?date=2026-03-23&lat=-37.814&lng=144.963&tz=Australia/Melbourne'
 )
 const { data } = await response.json()
@@ -581,7 +581,7 @@ console.log(`Rahukalam: ${data.rahukalam.start} – ${data.rahukalam.end}`)
 async function loadPanchangam() {
   const today = new Date().toISOString().split('T')[0]
   const res = await fetch(
-    `https://telugu-panchangam.pages.dev/api/panchangam?date=${today}&lat=17.385&lng=78.486&tz=Asia/Kolkata`
+    `https://telugu-panchangam-app.pages.dev/api/panchangam?date=${today}&lat=17.385&lng=78.486&tz=Asia/Kolkata`
   )
   const { data } = await res.json()
   document.getElementById('panchangam').innerHTML = `
@@ -600,7 +600,7 @@ import httpx
 from datetime import date
 
 response = httpx.get(
-    "https://telugu-panchangam.pages.dev/api/panchangam",
+    "https://telugu-panchangam-app.pages.dev/api/panchangam",
     params={
         "date": date.today().isoformat(),
         "lat": 17.385,
@@ -625,7 +625,7 @@ export function TodayPanchangam({ lat, lng, tz }: { lat: number; lng: number; tz
 
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0]
-    fetch(`https://telugu-panchangam.pages.dev/api/panchangam?date=${today}&lat=${lat}&lng=${lng}&tz=${tz}`)
+    fetch(`https://telugu-panchangam-app.pages.dev/api/panchangam?date=${today}&lat=${lat}&lng=${lng}&tz=${tz}`)
       .then(r => r.json())
       .then(r => setData(r.data))
   }, [lat, lng, tz])

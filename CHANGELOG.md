@@ -8,11 +8,29 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-### Planned for v1.0.0
-- PWA manifest and service worker
-- Cloudflare Pages production deployment
-- Full public API launch
-- README with live demo link
+---
+
+## [0.5.0] — 2026-03-31: Phase 5
+
+### Added
+- PWA manifest (manifest.json) with Lotus Dawn theme colours
+- Service worker (sw.js) — cache-first for geocoding, network-first for panchangam/festivals
+- ServiceWorkerRegistration client component
+- Apple mobile web app meta tags in layout
+- @cloudflare/next-on-pages adapter for Cloudflare Pages deployment
+- `export const runtime = 'edge'` on all API routes and root layout
+- D1 cache layer in /api/panchangam (read + write-through)
+- D1 persistence for /api/reminders POST (reminder storage)
+- src/lib/cloudflare.ts — getDB() and getKV() helpers for Cloudflare bindings
+- GitHub Actions deploy workflow (.github/workflows/deploy.yml)
+- Cloudflare Pages project created and first production deployment
+- nodejs_compat_v2 compatibility flag for full Node.js API support
+- .npmrc with legacy-peer-deps=true for build compatibility
+
+### Changed
+- next.config.mjs: dynamic import of setupDevPlatform (dev only)
+- wrangler.toml: pages_build_output_dir added for Pages integration
+- README: live URL updated to telugu-panchangam-app.pages.dev
 
 ---
 
