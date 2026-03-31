@@ -3,6 +3,7 @@ import "./globals.css";
 import AppHeader from "@/components/AppHeader";
 import NavBar from "@/components/NavBar";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
+import CityWelcome from "@/components/CityWelcome";
 
 export const runtime = "edge";
 
@@ -43,6 +44,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased bg-cream text-text-primary font-lora min-h-screen">
+        <CityWelcome />
         <AppHeader />
         <NavBar />
         <main>{children}</main>

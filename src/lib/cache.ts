@@ -57,4 +57,13 @@ export function setLang(lang: Lang): void {
   }
 }
 
+export function hasCity(): boolean {
+  if (typeof window === "undefined") return true;
+  try {
+    return localStorage.getItem(CITY_KEY) !== null;
+  } catch {
+    return true;
+  }
+}
+
 export { DEFAULT_CITY };
