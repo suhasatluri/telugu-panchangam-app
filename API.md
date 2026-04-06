@@ -547,6 +547,74 @@ One-click email unsubscribe. Returns an HTML page confirming cancellation.
 
 ---
 
+## POST /api/cron/send-reminders
+
+**Internal endpoint — not part of the public API.** Fired by a daily
+cron scheduler (currently a GitHub Actions workflow at
+`.github/workflows/daily-reminders.yml`) to actually deliver the
+reminder emails users have signed up for.
+
+### Authentication
+
+Required header:
+
+```
+Authorization: Bearer $CRON_SECRET
+```
+
+`CRON_SECRET` lives in Cloudflare Pages production secrets and (the
+same value) in the GitHub Actions secret of the same name. Generate
+with `openssl rand -hex 32`.
+
+### Behaviour
+
+For each `active = 1` row in the `reminders` table:
+
+1. Compute today's date in the user's IANA timezone (`tz` column).
+2. Compute `target_date = today + remind_days_before`.
+3. Calculate the panchangam for `target_date` at the user's lat/lng.
+4. **For monthly reminders** (`reminder_type = 'amavasya' | 'ekadashi'`),
+   match against the user's `tithi_types` opt-in list. Fires on the
+   first matching tithi (Amavasya = 30, Shukla Ekadashi = 11, Krishna
+   Ekadashi = 26, Purnima = 15).
+5. **For tithi anniversaries** (`reminder_type = 'tithi_anniversary'`),
+   match the exact stored `(masa, paksha, tithi)` triple. **Adhika
+   masas are skipped** — anniversaries always fall in the regular
+   month.
+6. If matched, send a bilingual email via Resend (`reminderEmail` or
+   `anniversaryReminderEmail` template), then mark `last_sent_date`
+   so the row is skipped on a second invocation the same day.
+7. If not matched, leave the row untouched.
+
+### Idempotency
+
+The `last_sent_date` column ensures each reminder fires at most once
+per calendar day even if the cron is invoked multiple times. The
+schedule (00:30 UTC) is best-effort — GitHub Actions cron has up to
+~15 minutes of jitter — but that's fine because the route is safe
+to retry.
+
+### Response
+
+```json
+{
+  "ok": true,
+  "scanned": 12,
+  "sent": 3,
+  "skipped_already_sent": 1,
+  "no_match": 8,
+  "errors": 0,
+  "details": [
+    { "id": "abc-123", "email": "user@example.com", "result": "sent", "kind": "amavasya" },
+    { "id": "def-456", "email": "other@example.com", "result": "no_match" }
+  ]
+}
+```
+
+Returns `401 UNAUTHORIZED` if the Bearer token is missing or wrong.
+
+---
+
 ## Error Codes
 
 | Code | HTTP Status | Meaning |

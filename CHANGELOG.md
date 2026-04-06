@@ -47,6 +47,39 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **`POST /api/cron/send-reminders`** — daily reminder cron worker.
+  Reads every active row from D1, computes today's panchangam (or
+  today + `remind_days_before`) at the user's city in their local
+  timezone, and sends a bilingual email via Resend if the day matches
+  the user's chosen tithi types (Amavasya / Ekadashi / Purnima) or
+  the stored anniversary tithi triple. Idempotent within a calendar
+  day via the new `last_sent_date` column. Authenticated by
+  `Authorization: Bearer $CRON_SECRET`.
+- **`src/engine/reminderMatcher.ts`** — pure matching logic
+  (`matchReminder`, `addDaysISO`, `todayInTimezone`) extracted so the
+  cron worker is fully unit-testable without D1 / Resend / edge
+  runtime. 16 new tests cover Amavasya / Ekadashi / Purnima opt-ins,
+  multi-opt-in priority, tithi-anniversary exact match, Adhika masa
+  rejection, paksha/null guards, day arithmetic across month and
+  year boundaries, and timezone-aware "today" computation.
+- **`migrations/003_reminder_sent_tracking.sql`** — adds
+  `last_sent_date` and `last_sent_kind` columns to the reminders
+  table plus an index, applied to production D1.
+- **`.github/workflows/daily-reminders.yml`** — GitHub Actions cron
+  schedule (00:30 UTC daily, also `workflow_dispatch` for manual
+  runs) that POSTs to the cron route with the Bearer token. Used
+  instead of Cloudflare Cron Triggers because Pages does not natively
+  support them.
+
+### Fixed
+- **The పితృ స్మరణ pipeline is now complete end-to-end.** Before
+  this commit, users could sign up via `POST /api/reminders` and
+  the row was stored in D1, but **no scheduled job ever read those
+  rows and sent the reminder on the right Tithi**. The cron worker
+  now closes that loop. 125 unit tests passing (was 109).
+
+
 These fixes ship between v1.1.1 and the next tagged release. They are
 follow-ups to the mobile hotfix discovered while iterating on CI.
 
