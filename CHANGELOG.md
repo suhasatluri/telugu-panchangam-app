@@ -11,7 +11,43 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 These fixes ship between v1.1.1 and the next tagged release. They are
 follow-ups to the mobile hotfix discovered while iterating on CI.
 
+### Added
+- **జన్మ తిథి Telugu Birthday Finder** — third tab on `/reminders`
+  alongside Monthly Reminders and Tithi Anniversary. Reuses the
+  anniversary engine but with birthday framing: "Date of birth",
+  "City of birth", "Find My Birthday", "Your Telugu birthday each year".
+  Birth tithi card at the top of results, "Share my Telugu birthday"
+  button copies a formatted message ready for WhatsApp/SMS. Bilingual
+  `TELUGU_BIRTHDAY` namespace in `i18n.ts` (commit `3d2ffb1`).
+- `CitySearchInline` reusable component — minimal inline geocode
+  typeahead with Cancel button, used to override the saved city in
+  the anniversary and birthday forms (commit `f721255`).
+- Calendar grid: mobile festival display now uses **dots only** (up to
+  3 dots + `+` overflow marker) instead of truncating festival names
+  to "Han…". Tablet/desktop unchanged. Faint accent tint on festival
+  days. "Tap any day to see festivals" hint above the weekday header
+  on mobile (commit `1d09847`).
+
 ### Fixed
+- **`/api/reminders/anniversary` was timing out** on Cloudflare's
+  10 ms edge CPU budget for 25-year requests. Three changes:
+  1. Replaced `estimateMasaStart` with `estimateMasaMidpoint`, an
+     empirical Gregorian midpoint table for each Telugu masa.
+  2. Narrowed scan window from 75 days → 41 days centred on the
+     midpoint (~45 % less CPU work per year).
+  3. KV cache (24 h TTL) on the route — first uncached hit ~1.5 s,
+     subsequent identical hits return `X-Cache: HIT` instantly.
+  4. Default span trimmed from 10 → 5 years.
+  Vijayawada / 1989-09-14 / Next 25 years now succeeds (commit `3d2ffb1`).
+- TithiAnniversary and TeluguBirthday "Your current city" field is now
+  **editable inline**. Click `[Change]` / `[మార్చండి]` → geocode
+  typeahead expands → selecting a city updates only the local form
+  state. `localStorage` is never touched, so the app's saved city is
+  unchanged when the user navigates away. Bilingual disclaimer
+  explains the override scope (commit `f721255`).
+- AppHeader title `<Link>` was rendering at 38.5 px (two stacked text
+  lines, no padding) — below the 44 px touch-target floor. Bumped to
+  `min-h-[44px] py-1 justify-center` (commit `1b9e717`).
 - `next.config.mjs`: skip `setupDevPlatform` when `process.env.CI` is set
   and wrap the import in `try/catch`. Stops Playwright e2e from crashing
   in CI with `Cannot find module 'wrangler'` (commit `6efaa1f`).
