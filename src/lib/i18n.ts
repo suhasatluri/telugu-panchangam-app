@@ -298,3 +298,105 @@ export const TELUGU_BIRTHDAY: Record<string, I18nString> = {
     en: "Calculated from the Moon's position at sunrise on your birth date. Accuracy depends on birth city and date.",
   },
 };
+
+/**
+ * /about page — full bilingual content for the five Panchanga elements.
+ *
+ * Each element has three short sub-paragraphs:
+ *   what    — plain-language definition
+ *   how     — how the engine actually computes it
+ *   example — a concrete worked numerical example
+ *
+ * These are the only strings that were English-only before. The page
+ * chrome (hero, section labels, feature cards, calculator copy) is
+ * already bilingual via inline ternaries in AboutPage.tsx and stays
+ * there to avoid churn — see commit 31308e6.
+ */
+interface AngaExplain {
+  what: I18nString;
+  how: I18nString;
+  example: I18nString;
+}
+
+export const ABOUT_ANGAS: Record<
+  "tithi" | "nakshatra" | "yoga" | "karana" | "vara",
+  AngaExplain
+> = {
+  tithi: {
+    what: {
+      te: "తిథి అంటే చంద్రుని మాసిక ప్రయాణంలో 30 దశలలో ఒకటి. అమావాస్య (నూతన చంద్రుడు) నుండి పౌర్ణమి (పూర్ణ చంద్రుడు) వరకు మరియు తిరిగి — ప్రతి దశ ఒక తిథి.",
+      en: "A Tithi is one of 30 phases of the Moon's monthly journey. From Amavasya (new moon) to Purnima (full moon) and back — each phase is one Tithi.",
+    },
+    how: {
+      te: "చంద్రుడు సూర్యుని కంటే ఎంత ముందున్నాడో మనం లెక్కిస్తాం. ప్రతి 12° తేడా = ఒక తిథి. 0° = అమావాస్య. 180° = పౌర్ణమి. ఒక చాంద్రమాసంలో 30 తిథులు ఉంటాయి.",
+      en: "We measure how far ahead the Moon is from the Sun. Every 12° difference = one Tithi. 0° = new moon. 180° = full moon. There are 30 Tithis in a lunar month.",
+    },
+    example: {
+      te: "చంద్రుడు 85° వద్ద, సూర్యుడు 19° వద్ద ఉంటే: తేడా = 66°. 66 ÷ 12 = 5.5 → మనం 6వ తిథిలో ఉన్నాం (షష్ఠి).",
+      en: "Moon at 85°, Sun at 19°. Difference = 66°. 66 ÷ 12 = 5.5 → we are in Tithi 6 (Shashthi / షష్ఠి).",
+    },
+  },
+  nakshatra: {
+    what: {
+      te: "ఆకాశాన్ని 27 సమాన భాగాలుగా విభజించారు, ప్రతి భాగానికి నక్షత్ర సమూహం పేరు పెట్టారు. చంద్రుడు ఒక నెలలో అన్ని 27 నక్షత్రాల గుండా ప్రయాణిస్తాడు. ఇప్పుడు చంద్రుడు ఏ నక్షత్రంలో ఉన్నాడో — అదే రోజు నక్షత్రం.",
+      en: "The sky is divided into 27 equal sections, each named after a star cluster. The Moon travels through all 27 in about a month. Whichever section the Moon is in right now — that is the Nakshatra of the day.",
+    },
+    how: {
+      te: "చంద్రుని పక్కా స్థానాన్ని (అయనాంశ సవరణ తర్వాత) 13.33° ముక్కలుగా విభజిస్తాం. ఫలితంగా వచ్చే సంఖ్య 1–27 మధ్య ఉంటుంది — అదే నక్షత్రం.",
+      en: "We take the Moon's exact sidereal position (after Ayanamsa correction) and divide by 13.33°. The result tells us which of the 27 Nakshatras the Moon is in.",
+    },
+    example: {
+      te: "చంద్రుడు 61.4° వద్ద ఉంటే: 61.4 ÷ 13.33 = 4.6 → నక్షత్రం 5 = మృగశిర (లేడి తల నక్షత్రం).",
+      en: "Moon at 61.4° → 61.4 ÷ 13.33 = 4.6 → Nakshatra 5 = Mrigashira (the deer's head star cluster).",
+    },
+  },
+  yoga: {
+    what: {
+      te: "యోగం రోజు యొక్క మొత్తం శక్తిని వర్ణిస్తుంది. 27 యోగాలు ఉన్నాయి — కొన్ని శుభమైనవి (శుభ, సిద్ధి, ధ్రువ), కొన్ని అశుభమైనవి (విష్కంభ, వ్యతీపాత). రోజు యొక్క \"రుచి\" అని అర్థం.",
+      en: "Yoga describes the overall energy of the day. There are 27 Yogas — some auspicious (Shubha, Siddhi, Dhruva), some inauspicious (Vishkambha, Vyatipata). Think of it as the flavour of the day.",
+    },
+    how: {
+      te: "సూర్యుని స్థానం మరియు చంద్రుని స్థానాన్ని కలిపి 13.33° తో భాగిస్తాం. నక్షత్రం లాంటిదే, కానీ రెండు గ్రహాల మొత్తాన్ని ఉపయోగిస్తాం.",
+      en: "We add the Sun's position and the Moon's position together, then divide by 13.33°. Similar to Nakshatra, but using the combined total of both planets.",
+    },
+    example: {
+      te: "సూర్యుడు 354.8° + చంద్రుడు 61.4° = 416.2°. 416.2 ÷ 13.33 = 31.2 → 27 తీసివేస్తే → యోగం 4 (సౌభాగ్య — శుభమైనది!).",
+      en: "Sun 354.8° + Moon 61.4° = 416.2°. 416.2 ÷ 13.33 = 31.2 → subtract 27 → Yoga 4 (Saubhagya — auspicious!).",
+    },
+  },
+  karana: {
+    what: {
+      te: "కరణం అంటే సరిగ్గా సగం తిథి. ప్రతి చాంద్రమాన రోజులో రెండు కరణాలు ఉంటాయి. వాటిని చాలా ఖచ్చితమైన సమయ నిర్ణయానికి ఉపయోగిస్తారు. కొన్ని కరణాలు (విష్టి/భద్ర వంటివి) ముఖ్యమైన పనులు ప్రారంభించడానికి అనుకూలం కాదు.",
+      en: "A Karana is exactly half a Tithi. There are two Karanas in every lunar day. They are used for very precise timing. Some Karanas like Vishti (Bhadra) are avoided for starting important activities.",
+    },
+    how: {
+      te: "తిథి వలె అదే చంద్ర-సూర్య కోణాన్ని ఉపయోగిస్తాం, కానీ 12° బదులు 6° తో భాగిస్తాం. ఇది రెట్టింపు సమయ నిర్ణయాన్ని ఇస్తుంది.",
+      en: "We use the same Moon-Sun angle as Tithi, but divide by 6° instead of 12°. This gives twice the time resolution within the day.",
+    },
+    example: {
+      te: "తిథి = షష్ఠి (6వది) అయితే, దానిలో రెండు కరణాలు ఉంటాయి. మొదటి సగం = కౌలవ, రెండవ సగం = తైతిల.",
+      en: "If Tithi = Shashthi (6th), there are two Karanas. First half = Kaulava, second half = Taitila.",
+    },
+  },
+  vara: {
+    what: {
+      te: "వారం అంటే వారపు రోజు — కానీ వేద సంప్రదాయంలో ప్రతి రోజు ఒక గ్రహం ఆధిపత్యంలో ఉంటుంది. ఆదివారం = రవి (సూర్యుడు), సోమవారం = సోమ (చంద్రుడు), మంగళవారం = మంగళ (కుజుడు), బుధవారం = బుధ (బుధుడు), గురువారం = గురు (బృహస్పతి), శుక్రవారం = శుక్ర (శుక్రుడు), శనివారం = శని (శనైశ్చరుడు).",
+      en: "The weekday — but in Vedic tradition each day is ruled by a planet. Sunday = Ravi (Sun), Monday = Soma (Moon), Tuesday = Mangala (Mars), Wednesday = Budha (Mercury), Thursday = Guru (Jupiter), Friday = Shukra (Venus), Saturday = Shani (Saturn).",
+    },
+    how: {
+      te: "జూలియన్ దినాంక సంఖ్యను ఉపయోగిస్తాం — 4713 BCE నుండి రోజులను నిరంతరంగా లెక్కిస్తుంది — మరియు 7 తో భాగించగా వచ్చే శేషాన్ని కనుగొంటాం. ఇది చరిత్రలో లేదా భవిష్యత్తులో ఏ తేదీకైనా పని చేస్తుంది.",
+      en: "We use the Julian Day Number — a continuous count of days since 4713 BCE — and find the remainder when divided by 7. This works for any date in history or the future.",
+    },
+    example: {
+      te: "ఏప్రిల్ 7, 2026 కి JDN = 2461136. 2461136 mod 7 = 2 → మంగళవారం.",
+      en: "JDN for April 7, 2026 = 2461136. 2461136 mod 7 = 2 → Tuesday (మంగళవారం).",
+    },
+  },
+};
+
+/** Section labels and short element names for /about, bilingual. */
+export const ABOUT: Record<string, I18nString> = {
+  whatLabel: { te: "ఇది ఏమిటి?", en: "What is it?" },
+  howLabel: { te: "ఎలా లెక్కిస్తాం", en: "How we calculate" },
+  exampleLabel: { te: "ఉదాహరణ", en: "Example" },
+};

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { getCity, getLang } from "@/lib/cache";
 import type { CityInfo } from "@/lib/cache";
+import { ABOUT, ABOUT_ANGAS } from "@/lib/i18n";
 import type { Lang } from "@/lib/i18n";
 
 // ─────────────────────────────────────────────────────────
@@ -84,16 +85,20 @@ const ENGINE_STEPS: EngineStep[] = [
 // Section 3 — Five Panchanga elements (accordion)
 // ─────────────────────────────────────────────────────────
 
+type AngaKey = "tithi" | "nakshatra" | "yoga" | "karana" | "vara";
+
 interface AngaItem {
-  key: string;
+  key: AngaKey;
   iconEn: string;
   nameEn: string;
   nameTe: string;
   shortEn: string;
   shortTe: string;
-  longEn: string;
 }
 
+// The accordion's expanded what / how / example content lives in
+// `ABOUT_ANGAS` in src/lib/i18n.ts, fully bilingual. This array
+// only carries the chrome (icon, name, short subtitle).
 const ANGAS: AngaItem[] = [
   {
     key: "tithi",
@@ -102,8 +107,6 @@ const ANGAS: AngaItem[] = [
     nameTe: "తిథి",
     shortEn: "Lunar day",
     shortTe: "చాంద్ర దినం",
-    longEn:
-      "One of 30 phases of the Moon. Tithi 1 (Pratipada) starts the day after a new moon or full moon. Tithi 11 is Ekadashi, 15 is Purnima, 30 is Amavasya. Each Tithi is exactly 12° of Moon-minus-Sun longitude.",
   },
   {
     key: "nakshatra",
@@ -112,8 +115,6 @@ const ANGAS: AngaItem[] = [
     nameTe: "నక్షత్రం",
     shortEn: "Lunar mansion",
     shortTe: "చంద్రుని ఇల్లు",
-    longEn:
-      "The 27 segments of the ecliptic the Moon passes through, each 13°20′ wide. Your janma nakshatra is the one the Moon was in when you were born. Used for muhurtam, naming and tarabalam.",
   },
   {
     key: "yoga",
@@ -122,8 +123,6 @@ const ANGAS: AngaItem[] = [
     nameTe: "యోగం",
     shortEn: "Sun + Moon angular sum",
     shortTe: "సూర్య + చంద్ర మొత్తం",
-    longEn:
-      "27 yogas computed from the SUM of Sun and Moon longitudes (rather than the difference, which gives Tithi). Indicates the day's overall quality — some yogas are auspicious, others to avoid for important activities.",
   },
   {
     key: "karana",
@@ -132,8 +131,6 @@ const ANGAS: AngaItem[] = [
     nameTe: "కరణం",
     shortEn: "Half a Tithi",
     shortTe: "తిథిలో సగం",
-    longEn:
-      "Each Tithi is split into two Karanas. There are 11 unique Karanas — 7 of them rotate (Bava, Balava, Kaulava, Taitila, Garaja, Vanija, Vishti) and 4 are fixed at the start of Krishna Pratipada and end of Amavasya. Used for fine-grained activity timing.",
   },
   {
     key: "vara",
@@ -142,8 +139,6 @@ const ANGAS: AngaItem[] = [
     nameTe: "వారం",
     shortEn: "Weekday at sunrise",
     shortTe: "సూర్యోదయంలో వారపు రోజు",
-    longEn:
-      "The day of the week, measured at sunrise — not at midnight. Each Vara is associated with a planet: Sunday/Sun, Monday/Moon, Tuesday/Mars, etc. The English weekday changes at midnight UTC; the Telugu Vara changes at local sunrise.",
   },
 ];
 
@@ -363,8 +358,31 @@ export default function AboutPage() {
                   <span className="text-accent text-lg">{isOpen ? "−" : "+"}</span>
                 </button>
                 {isOpen && (
-                  <div className="px-4 pb-4 text-sm text-text-secondary leading-relaxed font-lora border-t border-label/10 pt-3">
-                    {a.longEn}
+                  <div className="px-4 pb-4 border-t border-label/10 pt-3 space-y-3">
+                    <div>
+                      <div className={`text-[10px] uppercase tracking-wider text-label mb-1 ${lang === "te" ? "font-noto-telugu normal-case" : ""}`}>
+                        {ABOUT.whatLabel[lang]}
+                      </div>
+                      <p className={`text-sm text-text-secondary leading-relaxed ${teClass}`}>
+                        {ABOUT_ANGAS[a.key].what[lang]}
+                      </p>
+                    </div>
+                    <div>
+                      <div className={`text-[10px] uppercase tracking-wider text-label mb-1 ${lang === "te" ? "font-noto-telugu normal-case" : ""}`}>
+                        {ABOUT.howLabel[lang]}
+                      </div>
+                      <p className={`text-sm text-text-secondary leading-relaxed ${teClass}`}>
+                        {ABOUT_ANGAS[a.key].how[lang]}
+                      </p>
+                    </div>
+                    <div>
+                      <div className={`text-[10px] uppercase tracking-wider text-label mb-1 ${lang === "te" ? "font-noto-telugu normal-case" : ""}`}>
+                        {ABOUT.exampleLabel[lang]}
+                      </div>
+                      <p className={`text-sm text-text-secondary leading-relaxed font-mono ${lang === "te" ? "font-noto-telugu" : ""}`}>
+                        {ABOUT_ANGAS[a.key].example[lang]}
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
