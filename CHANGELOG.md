@@ -48,6 +48,37 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **New `/about` route — interactive engine explainer.** Five sections
+  walking visitors through how the Panchangam is actually computed:
+  hero with a pure-CSS solar system animation, six-step engine player
+  with Next/Back controls and per-step formulas, click-to-expand
+  accordion for the five Panchanga elements (Tithi / Nakshatra / Yoga
+  / Karana / Vara) now with full bilingual `what / how / example`
+  content from the new `ABOUT_ANGAS` namespace, a live calculator that
+  hits `/api/panchangam` for the user's saved city to prove the math
+  is real, and a six-card "Why this is different" grid. New
+  `src/app/about/page.tsx` (server, generateMetadata for SEO/OG) +
+  `src/components/AboutPage.tsx` (~430 lines client) (commit `31308e6`).
+- **`/about` accordion fully bilingual.** The accordion's expanded
+  paragraphs were the only English-only surface left on the page.
+  New `ABOUT_ANGAS` export in `i18n.ts` carries `what / how / example`
+  for each of the five elements in both Telugu and English (30 new
+  strings). Examples render in `font-mono` so the worked numerical
+  content (`Moon at 85°, Sun at 19° → tithi 6 (Shashthi)`,
+  `JDN 2461136 mod 7 = 2 → Tuesday`) reads cleanly. The translations
+  live in `i18n.ts` so future translators can find them without
+  grepping the component (commit `da05d2f`).
+- **`public/sitemap.xml`** — six URLs (`/`, `/about`, `/festivals`,
+  `/muhurtam`, `/nakshatra`, `/reminders`) with appropriate priorities
+  and changefreqs (commit `31308e6`).
+- **`public/robots.txt`** — `Allow: /`, blocks `/api/cron/` from
+  crawlers, links the sitemap (commit `31308e6`).
+- **Three new integration points** for `/about`: italic "How it works?"
+  link in the AppHeader nav row, "See how it works →" accent link in
+  the CityWelcome modal so first-time visitors have a path before
+  picking a city, and `/` keyboard shortcut. The KeyboardShortcutsHelp
+  modal now lists `/` → "How it works" so the shortcut is discoverable
+  (commit `31308e6`).
 - **`POST /api/cron/send-reminders`** — daily reminder cron worker.
   Reads every active row from D1, computes today's panchangam (or
   today + `remind_days_before`) at the user's city in their local
