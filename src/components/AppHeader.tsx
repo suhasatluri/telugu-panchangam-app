@@ -38,28 +38,28 @@ export default function AppHeader() {
         >
           <Link
             href="/festivals"
-            className="flex-shrink-0 text-white/70 hover:text-white text-xs font-lora transition-colors"
+            className="flex-shrink-0 inline-flex items-center min-h-[40px] py-2 text-white/70 hover:text-white text-xs font-lora transition-colors"
           >
             <span className="font-noto-telugu">పండుగలు</span>
             <span className="ml-1">Festivals</span>
           </Link>
           <Link
             href="/muhurtam"
-            className="flex-shrink-0 text-white/70 hover:text-white text-xs font-lora transition-colors"
+            className="flex-shrink-0 inline-flex items-center min-h-[40px] py-2 text-white/70 hover:text-white text-xs font-lora transition-colors"
           >
             <span className="font-noto-telugu">ముహూర్తం</span>
             <span className="ml-1">Muhurtam</span>
           </Link>
           <Link
             href="/nakshatra"
-            className="flex-shrink-0 text-white/70 hover:text-white text-xs font-lora transition-colors"
+            className="flex-shrink-0 inline-flex items-center min-h-[40px] py-2 text-white/70 hover:text-white text-xs font-lora transition-colors"
           >
             <span className="font-noto-telugu">నక్షత్రం</span>
             <span className="ml-1">Nakshatra</span>
           </Link>
           <Link
             href="/reminders"
-            className="flex-shrink-0 text-white/70 hover:text-white text-xs font-lora transition-colors"
+            className="flex-shrink-0 inline-flex items-center min-h-[40px] py-2 text-white/70 hover:text-white text-xs font-lora transition-colors"
           >
             <span className="font-noto-telugu">పితృ స్మరణ</span>
             <span className="ml-1">Reminders</span>

@@ -143,14 +143,12 @@ test.describe("Mobile Layout — City Welcome", () => {
     await page.evaluate(() => localStorage.clear());
     await page.reload();
 
-    // Use Playwright .or() chaining instead of mixing CSS selectors with
-    // text= engine syntax (which fails to parse as a single CSS string).
-    const welcome = page
-      .getByRole("button", { name: "Melbourne" })
-      .or(page.getByText("Welcome"))
-      .or(page.getByText("నమస్కారం"))
-      .first();
-    await expect(welcome).toBeVisible({ timeout: 5000 });
+    // Scope to the CityWelcome modal so we don't accidentally match the
+    // identically-labelled CitySearch button in AppHeader (which falls
+    // back to "Melbourne" when localStorage is empty and sits earlier
+    // in the DOM than the modal).
+    const welcomeModal = page.getByTestId("city-welcome");
+    await expect(welcomeModal).toBeVisible({ timeout: 5000 });
   });
 
   test("can select a quick city", async ({ page }) => {
@@ -158,12 +156,16 @@ test.describe("Mobile Layout — City Welcome", () => {
     await page.evaluate(() => localStorage.clear());
     await page.reload();
 
-    const melbourneBtn = page.locator('button:has-text("Melbourne")').first();
-    if (await melbourneBtn.isVisible()) {
-      await melbourneBtn.click();
-      const continueBtn = page.locator('button:has-text("Continue")').first();
-      await expect(continueBtn).toBeVisible({ timeout: 3000 });
-    }
+    const welcomeModal = page.getByTestId("city-welcome");
+    await expect(welcomeModal).toBeVisible({ timeout: 5000 });
+
+    // Click the Melbourne quick-select INSIDE the modal — not the
+    // CitySearch button in AppHeader that has the same label.
+    const melbourneBtn = welcomeModal.getByRole("button", { name: /Melbourne/ }).first();
+    await melbourneBtn.click();
+
+    const continueBtn = welcomeModal.getByRole("button", { name: /Continue/ }).first();
+    await expect(continueBtn).toBeVisible({ timeout: 3000 });
   });
 });
 

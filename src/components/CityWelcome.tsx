@@ -97,7 +97,12 @@ export default function CityWelcome({ isChanging, onDismiss }: CityWelcomeProps)
   if (!needsCity) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] bg-cream flex flex-col items-center overflow-y-auto">
+    <div
+      role="dialog"
+      aria-modal="true"
+      data-testid="city-welcome"
+      className="fixed inset-0 z-[200] bg-cream flex flex-col items-center overflow-y-auto"
+    >
       {/* Header gradient bar */}
       <div className="w-full bg-header-grad py-4 text-center">
         <div className="font-noto-telugu text-white text-xl">తెలుగు పంచాంగం</div>
