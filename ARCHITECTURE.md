@@ -444,6 +444,59 @@ If any calculation exceeds 10ms, the fallback is to serve from D1 pre-computed c
 
 ---
 
+## Testing
+
+The project has two independent test layers, both gated in CI.
+
+### Unit + regression (Jest)
+
+- **Runner:** Jest with `ts-jest`
+- **Roots:** `src/` and `validation/` only (configured in `jest.config.js`)
+- **Suites:**
+  - Engine module tests co-located with each module (`src/engine/*.test.ts`)
+  - Venkatrama regression assertions in `validation/regression.test.ts`
+- **Run:**
+  ```bash
+  npm test                # all tests
+  npm run test:engine     # engine modules only
+  npm run test:validation # Venkatrama ground-truth assertions
+  ```
+- **Current count:** 107 tests across 12 suites. Every PR must keep this
+  green — Venkatrama assertions are the project's accuracy guarantee.
+
+### End-to-end (Playwright)
+
+- **Runner:** `@playwright/test`, chromium-only
+- **Config:** `playwright.config.ts` defines five viewports and a single
+  shared `mobileChromium` base built from `devices['Desktop Chrome']` plus
+  `isMobile`/`hasTouch`. We deliberately avoid `devices['iPhone …']` and
+  `devices['iPad …']` because those switch the engine to webkit and would
+  require an extra `playwright install webkit` step in CI.
+- **Tests:** `e2e/mobile.spec.ts` covers:
+  - DayDetail share button does not overlap the date heading
+  - Pancha Anga renders as 2 columns below 640 px
+  - Telugu text is visible and not zero-width
+  - Nav links are scrollable so the last (పితృ స్మరణ) is reachable
+  - Primary touch targets (width > 60 px) are ≥ 40 px tall
+  - CityWelcome first-visit prompt fires when localStorage is empty
+  - Screenshot capture for visual reference
+- **Viewports:** 375, 390, 430, 768, 1280 px
+- **Run:**
+  ```bash
+  npx playwright install chromium --with-deps  # one-time setup
+  npm run test:e2e:mobile                       # 375 + 390
+  npm run test:e2e                              # all five viewports
+  npm run test:e2e:report                       # open last HTML report
+  ```
+- **CI:** the `e2e` job in `.github/workflows/ci.yml` runs after the unit
+  test job. On failure it uploads `e2e/screenshots/` and `playwright-report/`
+  as artifacts (7-day retention).
+- **Dev-server hook:** Playwright's `webServer` runs `npm run dev`. In CI
+  the `setupDevPlatform` import in `next.config.mjs` is skipped (it would
+  otherwise try to load `wrangler`, which isn't in `node_modules`).
+
+---
+
 ## Security Model
 
 ### What is sensitive

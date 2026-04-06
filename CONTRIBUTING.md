@@ -96,6 +96,33 @@ npm test -- validation/regression.test.ts
 npm run validate -- --date=2026-03-19
 ```
 
+### Running Mobile E2E Tests (Playwright)
+
+We catch mobile layout regressions with Playwright across five viewports
+(375, 390, 430, 768, 1280 px). All viewports run on chromium so the
+one-time browser install is small.
+
+```bash
+# One-time setup — installs the chromium binary
+npx playwright install chromium --with-deps
+
+# Run the mobile-only subset (375 + 390 px) — fastest feedback
+npm run test:e2e:mobile
+
+# Run all five viewports
+npm run test:e2e
+
+# Open the last HTML report
+npm run test:e2e:report
+```
+
+The dev server starts automatically via Playwright's `webServer` hook —
+you do **not** need a separate `npm run dev` running.
+
+CI runs the mobile e2e job on every push (`.github/workflows/ci.yml` →
+`e2e` job). Screenshots and the HTML report are uploaded as artifacts
+on failure.
+
 ---
 
 ## Project Structure for Contributors

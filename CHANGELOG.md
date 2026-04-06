@@ -6,7 +6,39 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [1.0.0] — 2026-04-06: Public launch
+## [1.1.1] — 2026-04-06: Mobile hotfix
+
+### Fixed
+- AppHeader nav links: wrapped in a horizontally scrollable container with
+  `flex-shrink-0` on each link and a trailing spacer so the last link
+  (పితృ స్మరణ) is fully reachable on 375 px screens. The `?` button is
+  now pinned outside the scroll region.
+- DayDetail share button: replaced absolute positioning with a flex row
+  (`<h1 flex-1>` + `<button flex-shrink-0>`). Share label is hidden below
+  the `sm` breakpoint and the button has a 44 px touch target. No more
+  overlap with the date heading on narrow phones.
+- `next.config.mjs`: `setupDevPlatform` is now skipped when `process.env.CI`
+  is set and the import is wrapped in `try/catch`. Stops Playwright e2e
+  from crashing in CI with `Cannot find module 'wrangler'`.
+
+### Added
+- `.scrollbar-hide` cross-browser CSS utility in `globals.css`
+- Playwright e2e suite (`@playwright/test`) with five viewports: 375, 390,
+  430, 768, 1280 px, all running on chromium so CI only needs
+  `playwright install chromium`
+- `e2e/mobile.spec.ts` covering: date/share overlap, 2-column Pancha Anga,
+  Telugu visibility, nav scroll, primary touch targets ≥ 40 px,
+  CityWelcome first-visit prompt, screenshot capture
+- `playwright.config.ts` with a `mobileChromium` shared base
+- `package.json` scripts: `test:e2e`, `test:e2e:mobile`,
+  `test:e2e:report`, `test:e2e:screenshots`
+- GitHub Actions: new `e2e` job that runs after the unit-test job, installs
+  chromium with deps, and uploads screenshots + HTML report as artifacts
+  on failure
+
+---
+
+## [1.1.0] — 2026-04-06: UX improvements + polish
 
 ### Added
 - LocationDisclaimer component — soft informational banner explaining that Tithi
@@ -62,6 +94,25 @@ Versioning follows [Semantic Versioning](https://semver.org/).
   reading a single English word
 - PWA install icons are now real PNGs (not SVG-as-PNG placeholders), so Android
   and iOS Safari render the home-screen icon correctly
+
+---
+
+## [1.0.0] — 2026-04-06: Public launch milestone
+
+The initial public release. Cuts a stable point at the end of Phase 5,
+just before the v1.1.0 UX wave. See the per-phase entries below for the
+detailed feature history.
+
+### Highlights
+- VSOP87 calculation engine — pure functions, no date limits
+- 12 calendar/festival/finder pages (Today, month, day, festivals,
+  muhurtam, nakshatra, reminders, tithi anniversary)
+- Bilingual Telugu + English throughout (i18n module)
+- Cloudflare Pages edge deployment with D1 cache and KV
+- 75+ engine tests including 26 Venkatrama regression assertions
+- Public API — free, no key required, 7 endpoints
+- PWA manifest + service worker (icons later replaced with real PNGs in v1.1.0)
+- Live at https://telugu-panchangam-app.pages.dev
 
 ---
 
