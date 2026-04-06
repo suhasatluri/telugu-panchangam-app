@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useMonth } from "@/hooks/usePanchangam";
 import { getLang } from "@/lib/cache";
 import CalendarGrid from "@/components/CalendarGrid";
+import PrintableCalendar from "@/components/PrintableCalendar";
 import TimeNav from "@/components/TimeNav";
 import LoadingState from "@/components/LoadingState";
 import ErrorState from "@/components/ErrorState";
@@ -16,7 +17,7 @@ interface MonthPageProps {
 export default function MonthPage({ params }: MonthPageProps) {
   const year = parseInt(params.year, 10);
   const month = parseInt(params.month, 10);
-  const { data, loading, error } = useMonth(year, month);
+  const { data, loading, error, city } = useMonth(year, month);
   const [lang, setLang] = useState<Lang>("en");
 
   useEffect(() => {
@@ -63,9 +64,36 @@ export default function MonthPage({ params }: MonthPageProps) {
         )}
       </div>
 
-      <TimeNav year={year} month={month} />
+      <div className="flex items-center justify-between gap-2 no-print">
+        <div className="flex-1">
+          <TimeNav year={year} month={month} />
+        </div>
+        <button
+          onClick={() => window.print()}
+          className="no-print flex items-center gap-1.5 px-3 py-2 rounded-lg border border-accent/30 text-text-secondary text-sm font-lora hover:border-accent hover:text-accent transition-colors min-h-[44px]"
+          title="Print this month's calendar"
+          aria-label="Print"
+        >
+          <span aria-hidden="true">&#x1F5A8;&#xFE0F;</span>
+          <span className={`hidden sm:inline ${lang === "te" ? "font-noto-telugu" : ""}`}>
+            {lang === "te" ? "ముద్రించు" : "Print"}
+          </span>
+        </button>
+      </div>
 
-      <CalendarGrid year={year} month={month} days={data.days} />
+      <div className="print:hidden">
+        <CalendarGrid year={year} month={month} days={data.days} />
+      </div>
+
+      <PrintableCalendar
+        year={year}
+        month={month}
+        days={data.days}
+        samvatsaram={data.samvatsaram}
+        masa={data.masa}
+        cityName={city.name}
+        lang={lang}
+      />
     </div>
   );
 }
