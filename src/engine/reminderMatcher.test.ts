@@ -112,12 +112,13 @@ describe("matchReminder", () => {
   });
 
   describe("tithi_anniversary", () => {
-    it("matches an exact masa+paksha+tithi triple", () => {
+    it("matches an exact masa+paksha+tithi triple (Shukla)", () => {
+      // Shukla: paksha-relative number == absolute number
       const r = baseReminder({
         reminder_type: "tithi_anniversary",
         tithi_masa_number: 2,
         tithi_paksha: "shukla",
-        tithi_number: 5,
+        tithi_number: 5, // Shukla Panchami → absolute 5
         tithi_description: "Vaishakha Shukla Panchami",
       });
       const p = fakePanchangam({ masaNumber: 2, paksha: "shukla", tithiNumber: 5 });
@@ -125,6 +126,33 @@ describe("matchReminder", () => {
       expect(m.matched).toBe(true);
       expect(m.kind).toBe("tithi_anniversary");
       expect(m.en).toBe("Vaishakha Shukla Panchami");
+    });
+
+    it("matches a Krishna paksha tithi (paksha-relative → absolute conversion)", () => {
+      // Krishna Dashami stored as 10, must compare against absolute 25
+      const r = baseReminder({
+        reminder_type: "tithi_anniversary",
+        tithi_masa_number: 1,
+        tithi_paksha: "krishna",
+        tithi_number: 10, // paksha-relative
+        tithi_description: "Chaitra Krishna Dashami",
+      });
+      const p = fakePanchangam({ masaNumber: 1, paksha: "krishna", tithiNumber: 25 });
+      const m = matchReminder(r, p);
+      expect(m.matched).toBe(true);
+      expect(m.kind).toBe("tithi_anniversary");
+    });
+
+    it("does NOT match Krishna stored value against the wrong absolute tithi", () => {
+      // tithi_number 10 in Krishna means absolute 25, NOT absolute 10
+      const r = baseReminder({
+        reminder_type: "tithi_anniversary",
+        tithi_masa_number: 1,
+        tithi_paksha: "krishna",
+        tithi_number: 10,
+      });
+      const p = fakePanchangam({ masaNumber: 1, paksha: "krishna", tithiNumber: 10 });
+      expect(matchReminder(r, p).matched).toBe(false);
     });
 
     it("does NOT match if the masa is Adhika (intercalary)", () => {

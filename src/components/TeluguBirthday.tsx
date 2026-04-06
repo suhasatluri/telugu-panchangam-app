@@ -56,6 +56,13 @@ export default function TeluguBirthday() {
   const [error, setError] = useState("");
   const [shareCopied, setShareCopied] = useState(false);
 
+  // Inline yearly reminder signup state
+  const [reminderOpen, setReminderOpen] = useState(false);
+  const [reminderEmail, setReminderEmail] = useState("");
+  const [reminderDays, setReminderDays] = useState(1);
+  const [reminderSending, setReminderSending] = useState(false);
+  const [reminderSaved, setReminderSaved] = useState(false);
+
   useEffect(() => {
     setCity(getCity());
     setLangState(getLang());
@@ -152,6 +159,47 @@ export default function TeluguBirthday() {
       })
       .catch(() => {});
   }, [occurrences, tithiIdentity, lang]);
+
+  const saveYearlyReminder = useCallback(async () => {
+    if (!city || !tithiIdentity || !reminderEmail) return;
+    setReminderSending(true);
+    try {
+      const res = await fetch("/api/reminders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: reminderEmail,
+          name: reminderEmail.split("@")[0],
+          city_name: city.name,
+          lat: city.lat,
+          lng: city.lng,
+          tz: city.tz,
+          tithi_types: ["tithi_anniversary"],
+          personal_note:
+            lang === "te" ? "నా తెలుగు పుట్టినరోజు" : "My Telugu birthday",
+          remind_days_before: reminderDays,
+          remind_time: "06:00",
+          reminder_type: "tithi_anniversary",
+          // Identifying triple — the cron worker uses these to find
+          // the correct day each year. Without them the row stores
+          // but never fires.
+          tithi_masa_number: tithiIdentity.masaNumber,
+          tithi_paksha: tithiIdentity.paksha,
+          tithi_number: tithiIdentity.tithiNumber,
+          tithi_description: tithiIdentity.description,
+          original_date: dob,
+        }),
+      });
+      if (res.ok) {
+        setReminderSaved(true);
+        setReminderOpen(false);
+      }
+    } catch {
+      /* ignore */
+    } finally {
+      setReminderSending(false);
+    }
+  }, [city, tithiIdentity, reminderEmail, reminderDays, dob, lang]);
 
   // ─── STATE 1: Form ───
   if (viewState === "form") {
@@ -351,6 +399,72 @@ export default function TeluguBirthday() {
           </button>
         )}
       </div>
+
+      {/* Yearly birthday reminder signup */}
+      {occurrences.length > 0 && tithiIdentity && !reminderSaved && (
+        <div className="rounded-xl border-2 border-gold/30 p-5 bg-gold/5">
+          <h3 className="font-noto-telugu text-gold text-base font-semibold mb-1">
+            🎂 {TELUGU_BIRTHDAY.setReminder[lang]}
+          </h3>
+          <p className={`text-text-secondary text-xs mb-3 ${teClass}`}>
+            {lang === "te"
+              ? "ప్రతి సంవత్సరం మీ తెలుగు పుట్టినరోజుకు ముందు రోజు ఇమెయిల్ ద్వారా గుర్తు చేస్తాం."
+              : "We will email you a day before your Telugu birthday every year — automatically, no need to look it up again."}
+          </p>
+          {!reminderOpen ? (
+            <button
+              type="button"
+              onClick={() => setReminderOpen(true)}
+              className={`w-full py-2.5 rounded-md bg-gold text-white text-sm font-semibold hover:opacity-90 transition-opacity ${teClass}`}
+            >
+              {TELUGU_BIRTHDAY.setReminder[lang]} →
+            </button>
+          ) : (
+            <div className="space-y-2">
+              <input
+                type="email"
+                value={reminderEmail}
+                onChange={(e) => setReminderEmail(e.target.value)}
+                placeholder="your@email.com"
+                className="w-full px-3 py-2 rounded-md border border-gold/30 bg-cream text-sm font-lora focus:outline-none focus:border-gold"
+              />
+              <select
+                value={reminderDays}
+                onChange={(e) => setReminderDays(parseInt(e.target.value, 10))}
+                className={`w-full px-3 py-2 rounded-md border border-gold/30 bg-cream text-sm focus:outline-none focus:border-gold ${teClass}`}
+              >
+                <option value={0}>{TITHI_ANNIV.onTheDay[lang]}</option>
+                <option value={1}>{TITHI_ANNIV.oneDayBefore[lang]}</option>
+                <option value={2}>{TITHI_ANNIV.twoDaysBefore[lang]}</option>
+              </select>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={saveYearlyReminder}
+                  disabled={!reminderEmail || reminderSending}
+                  className={`flex-1 py-2 rounded-md bg-gold text-white text-sm font-semibold disabled:opacity-50 ${teClass}`}
+                >
+                  {reminderSending ? TITHI_ANNIV.sending[lang] : TITHI_ANNIV.confirmReminder[lang]}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setReminderOpen(false)}
+                  className={`px-3 py-2 rounded-md border border-label/20 text-xs text-label ${teClass}`}
+                >
+                  {TITHI_ANNIV.cancel[lang]}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      {reminderSaved && (
+        <div className="rounded-xl border border-auspicious/30 bg-auspicious/5 p-4 text-center">
+          <p className={`text-auspicious text-sm ${teClass}`}>
+            ✓ {TITHI_ANNIV.reminderSet[lang]} — {TITHI_ANNIV.oncePerYear[lang]}
+          </p>
+        </div>
+      )}
 
       {/* Birthday list */}
       <div>

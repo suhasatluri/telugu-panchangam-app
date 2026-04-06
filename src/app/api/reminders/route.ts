@@ -98,15 +98,22 @@ export async function POST(request: NextRequest) {
       html: template.html,
     });
 
-    // Persist reminder to D1
+    // Persist reminder to D1. INCLUDES tithi_* and origin_* columns —
+    // these are critical for tithi_anniversary rows because the daily
+    // cron worker (POST /api/cron/send-reminders) needs the masa+paksha+
+    // tithi triple to match the user's saved Tithi against today's
+    // panchangam. Earlier versions of this route silently dropped them
+    // and the cron always returned no_match for anniversary rows.
     const db = getDB();
     if (db) {
       db.prepare(
         `INSERT INTO reminders
          (id, email, name, city_name, lat, lng, tz, tithi_types, custom_tithi,
           personal_note, remind_days_before, remind_time, reminder_type,
+          tithi_masa_number, tithi_paksha, tithi_number, tithi_description,
+          origin_lat, origin_lng, origin_tz, original_date,
           unsubscribe_token, created_at)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
       )
         .bind(
           id,
@@ -122,6 +129,14 @@ export async function POST(request: NextRequest) {
           parsed.data.remind_days_before,
           parsed.data.remind_time,
           parsed.data.reminder_type,
+          parsed.data.tithi_masa_number ?? null,
+          parsed.data.tithi_paksha ?? null,
+          parsed.data.tithi_number ?? null,
+          parsed.data.tithi_description ?? null,
+          parsed.data.origin_lat ?? null,
+          parsed.data.origin_lng ?? null,
+          parsed.data.origin_tz ?? null,
+          parsed.data.original_date ?? null,
           unsubscribe_token,
           new Date().toISOString()
         )

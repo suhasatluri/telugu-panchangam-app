@@ -35,7 +35,12 @@ export interface StoredReminder {
   /** For tithi_anniversary rows: the original masa+paksha+tithi to match */
   tithi_masa_number?: number | null;
   tithi_paksha?: "shukla" | "krishna" | null;
-  /** Stored as the absolute 1-30 tithi number */
+  /**
+   * Paksha-relative tithi number (1-15). Matches the convention used by
+   * `TithiIdentity` and the POST /api/reminders schema. The matcher
+   * converts this to the absolute 1-30 number used by `DayPanchangam.tithi.number`
+   * before comparison: `absolute = paksha === 'shukla' ? n : n + 15`.
+   */
   tithi_number?: number | null;
   tithi_description?: string | null;
   unsubscribe_token: string;
@@ -76,15 +81,22 @@ export function matchReminder(
       reminder.tithi_number != null &&
       p.masa.number === reminder.tithi_masa_number &&
       !p.masa.isAdhika &&
-      p.paksha.value === reminder.tithi_paksha &&
-      p.tithi.number === reminder.tithi_number
+      p.paksha.value === reminder.tithi_paksha
     ) {
-      return {
-        matched: true,
-        kind: "tithi_anniversary",
-        te: p.tithi.te,
-        en: reminder.tithi_description ?? p.tithi.en,
-      };
+      // Convert paksha-relative (1-15) to absolute (1-30) for comparison
+      // against DayPanchangam.tithi.number which is always absolute.
+      const absoluteTarget =
+        reminder.tithi_paksha === "shukla"
+          ? reminder.tithi_number
+          : reminder.tithi_number + 15;
+      if (p.tithi.number === absoluteTarget) {
+        return {
+          matched: true,
+          kind: "tithi_anniversary",
+          te: p.tithi.te,
+          en: reminder.tithi_description ?? p.tithi.en,
+        };
+      }
     }
     return { matched: false };
   }

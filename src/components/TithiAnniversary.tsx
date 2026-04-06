@@ -159,6 +159,12 @@ export default function TithiAnniversary() {
           remind_days_before: reminderDays,
           remind_time: "06:00",
           reminder_type: "tithi_anniversary",
+          // CRITICAL — these three fields are what the daily cron
+          // worker uses to find the right day each year. Without
+          // them the row is stored but never fires.
+          tithi_masa_number: tithiIdentity.masaNumber,
+          tithi_paksha: tithiIdentity.paksha,
+          tithi_number: tithiIdentity.tithiNumber,
           tithi_description: tithiIdentity.description,
           original_date: originalDate,
         }),
