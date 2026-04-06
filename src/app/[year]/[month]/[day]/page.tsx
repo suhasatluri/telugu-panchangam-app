@@ -1,43 +1,32 @@
-"use client";
+import type { Metadata } from "next";
+import DayPageClient from "./DayPageClient";
 
-import { usePanchangam } from "@/hooks/usePanchangam";
-import DayDetail from "@/components/DayDetail";
-import LoadingState from "@/components/LoadingState";
-import ErrorState from "@/components/ErrorState";
+export const runtime = "edge";
 
 interface DayPageProps {
   params: { year: string; month: string; day: string };
 }
 
-export default function DayPage({ params }: DayPageProps) {
+export async function generateMetadata({ params }: DayPageProps): Promise<Metadata> {
   const { year, month, day } = params;
-  const dateStr = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  const date = new Date(`${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`);
+  const dateStr = date.toLocaleDateString("en-AU", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
-  const { data, loading, error } = usePanchangam(dateStr);
+  return {
+    title: `పంచాంగం ${dateStr} — Telugu Panchangam`,
+    description: `Telugu Panchangam for ${dateStr}. Tithi, Nakshatra, Yoga, Karana, Vara, Rahukalam and sky timings.`,
+    openGraph: {
+      title: `పంచాంగం ${dateStr}`,
+      description: `Telugu Panchangam for ${dateStr}`,
+      url: `https://telugu-panchangam-app.pages.dev/${year}/${month}/${day}`,
+    },
+  };
+}
 
-  if (loading) {
-    return (
-      <div className="py-6 px-4">
-        <LoadingState variant="skeleton" />
-      </div>
-    );
-  }
-
-  if (error || !data) {
-    return (
-      <div className="py-6 px-4">
-        <ErrorState
-          message={error ?? "Failed to load Panchangam data."}
-          messageTe={error ?? "పంచాంగం డేటా లోడ్ చేయడం విఫలమైంది."}
-          onRetry={() => window.location.reload()}
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div className="py-6 px-4">
-      <DayDetail data={data} />
-    </div>
-  );
+export default function DayPage({ params }: DayPageProps) {
+  return <DayPageClient year={params.year} month={params.month} day={params.day} />;
 }

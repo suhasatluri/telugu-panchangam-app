@@ -10,13 +10,60 @@ export const runtime = "edge";
 export const metadata: Metadata = {
   title: "తెలుగు పంచాంగం — Telugu Panchangam",
   description:
-    "Free, open-source Telugu Panchangam — any city, any date, no limit. Accurate Tithi, Nakshatra, Yoga, Karana, sunrise, moonrise, Rahukalam for cities worldwide.",
+    "Free, open-source Telugu Panchangam for any city in the world, any date. Tithi, Nakshatra, Yoga, Karana, Vara, Rahukalam, festivals and more. The sky has no expiry date.",
+  keywords: [
+    "Telugu Panchangam",
+    "తెలుగు పంచాంగం",
+    "Tithi",
+    "Nakshatra",
+    "Telugu calendar",
+    "Amavasya",
+    "Purnima",
+    "Ugadi",
+    "Melbourne Telugu",
+    "Telugu diaspora",
+  ],
+  authors: [{ name: "Suhas Atluri" }],
+  creator: "Suhas Atluri",
+  publisher: "Telugu Panchangam",
+  metadataBase: new URL("https://telugu-panchangam-app.pages.dev"),
   openGraph: {
+    type: "website",
+    locale: "te_IN",
+    alternateLocale: "en_AU",
+    url: "https://telugu-panchangam-app.pages.dev",
+    siteName: "తెలుగు పంచాంగం",
     title: "తెలుగు పంచాంగం — Telugu Panchangam",
     description:
-      "Free Telugu Panchangam for any city, any date. Accurate astronomical calculations.",
-    type: "website",
+      "Free Telugu Panchangam for any city, any date. Tithi, Nakshatra, festivals, ancestor reminders and more.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "తెలుగు పంచాంగం — Telugu Panchangam",
+        type: "image/png",
+      },
+    ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "తెలుగు పంచాంగం — Telugu Panchangam",
+    description:
+      "Free Telugu Panchangam for any city, any date. The sky has no expiry date.",
+    images: ["/og-image.png"],
+    creator: "@suhasatluri",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/icon-192.png",
+  },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
