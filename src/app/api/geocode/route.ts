@@ -33,7 +33,14 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const url = `${OPENCAGE_BASE}?q=${encodeURIComponent(parsed.data.q)}&key=${apiKey}&limit=5&no_annotations=0`;
+    // Bias OpenCage toward city-level results — no street addresses,
+    // POIs, or shop names — and ask for higher confidence.
+    const url =
+      `${OPENCAGE_BASE}?q=${encodeURIComponent(parsed.data.q)}` +
+      `&key=${apiKey}` +
+      `&limit=10` +
+      `&no_annotations=0` +
+      `&min_confidence=3`;
     const res = await fetch(url);
 
     if (!res.ok) {
@@ -43,22 +50,67 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    interface OpenCageComponent {
+      _type?: string;
+      city?: string;
+      town?: string;
+      village?: string;
+      municipality?: string;
+      county?: string;
+      state_district?: string;
+      state?: string;
+      country?: string;
+    }
+    interface OpenCageResult {
+      formatted: string;
+      geometry: { lat: number; lng: number };
+      annotations?: { timezone?: { name?: string } };
+      components?: OpenCageComponent;
+    }
+
+    const CITY_TYPES = new Set([
+      "city",
+      "town",
+      "village",
+      "municipality",
+      "county",
+      "state_district",
+    ]);
+
     const json = await res.json();
-    const results = (json.results ?? []).map(
-      (r: {
-        formatted: string;
-        geometry: { lat: number; lng: number };
-        annotations?: { timezone?: { name?: string } };
-        components?: { country?: string; state?: string };
-      }) => ({
-        displayName: r.formatted,
-        lat: r.geometry.lat,
-        lng: r.geometry.lng,
-        timezone: r.annotations?.timezone?.name ?? "UTC",
-        country: r.components?.country ?? "",
-        state: r.components?.state ?? "",
+    const raw: OpenCageResult[] = json.results ?? [];
+
+    // Keep only city-level entries; fall back to all results if none.
+    const cityResults = raw.filter((r) => {
+      const t = r.components?._type;
+      return t ? CITY_TYPES.has(t) : false;
+    });
+    const filtered = cityResults.length > 0 ? cityResults : raw;
+
+    // Build clean "City, State, Country" labels and de-duplicate by name.
+    const seen = new Set<string>();
+    const results = filtered
+      .map((r) => {
+        const c = r.components ?? {};
+        const cityName =
+          c.city || c.town || c.village || c.municipality || c.county || c.state_district || "";
+        const parts = [cityName, c.state, c.country].filter(Boolean);
+        const displayName = parts.length > 0 ? parts.join(", ") : r.formatted;
+        return {
+          displayName,
+          lat: r.geometry.lat,
+          lng: r.geometry.lng,
+          timezone: r.annotations?.timezone?.name ?? "UTC",
+          country: c.country ?? "",
+          state: c.state ?? "",
+        };
       })
-    );
+      .filter((city) => {
+        if (!city.displayName || seen.has(city.displayName)) return false;
+        seen.add(city.displayName);
+        return true;
+      })
+      .slice(0, 5);
 
     return NextResponse.json(
       { data: results, source: "opencage" },

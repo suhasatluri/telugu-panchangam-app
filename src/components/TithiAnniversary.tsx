@@ -383,13 +383,20 @@ export default function TithiAnniversary() {
                 </div>
                 <div className={`text-xs text-label mt-1 ${teClass}`}>
                   &#x1F305; {TITHI_ANNIV.sunriseLabel[lang]}: {occ.sunriseTime}
-                  {!isPast && occ.daysFromNow > 0 && (
-                    <span className="ml-2 text-accent">
+                  {occ.daysFromNow === 0 && (
+                    <span className="ml-2 text-gold font-bold">
+                      &middot; &#x1FA94; {TITHI_ANNIV.todayLabel[lang]}
+                    </span>
+                  )}
+                  {occ.daysFromNow > 0 && (
+                    <span className="ml-2 text-auspicious">
                       &middot; {occ.daysFromNow} {TITHI_ANNIV.inDays[lang]}
                     </span>
                   )}
-                  {occ.daysFromNow === 0 && (
-                    <span className="ml-2 text-accent font-semibold">&middot; {TITHI_ANNIV.todayLabel[lang]}</span>
+                  {occ.daysFromNow < 0 && (
+                    <span className="ml-2 text-label/60 italic">
+                      &middot; {Math.abs(occ.daysFromNow)} {TITHI_ANNIV.daysAgo[lang]}
+                    </span>
                   )}
                 </div>
 

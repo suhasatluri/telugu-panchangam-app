@@ -56,8 +56,11 @@ export async function GET(request: NextRequest) {
 
   // KV cache key — anniversary Tithis for a given (date, origin, span)
   // do not change, so we can cache aggressively.
+  // The "v2" version tag invalidates pre-fix cache entries that were
+  // computed with the old samvatsaram-relative year semantics for
+  // masas 11/12 (Magha/Phalguna) and the narrower 41-day scan window.
   const cacheKey =
-    `anniversary:${date}:${origin_lat.toFixed(3)}:${origin_lng.toFixed(3)}` +
+    `anniversary-v2:${date}:${origin_lat.toFixed(3)}:${origin_lng.toFixed(3)}` +
     `:${lat.toFixed(3)}:${lng.toFixed(3)}:${fromYear}:${toYear}`;
 
   const kv = getKV();
