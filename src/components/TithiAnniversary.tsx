@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getCity } from "@/lib/cache";
+import { getCity, getLang } from "@/lib/cache";
 import type { CityInfo } from "@/lib/cache";
+import { TITHI_ANNIV } from "@/lib/i18n";
+import type { Lang } from "@/lib/i18n";
 
 interface TithiIdentity {
   masaNumber: number;
@@ -37,6 +39,7 @@ type ViewState = "form" | "loading" | "results";
 export default function TithiAnniversary() {
   const [viewState, setViewState] = useState<ViewState>("form");
   const [city, setCity] = useState<CityInfo | null>(null);
+  const [lang, setLangState] = useState<Lang>("en");
 
   // Form state
   const [passingDate, setPassingDate] = useState("");
@@ -63,7 +66,10 @@ export default function TithiAnniversary() {
 
   useEffect(() => {
     setCity(getCity());
+    setLangState(getLang());
   }, []);
+
+  const teClass = lang === "te" ? "font-noto-telugu" : "font-lora";
 
   // Origin city search
   const searchOrigin = useCallback(async (q: string) => {
@@ -167,16 +173,14 @@ export default function TithiAnniversary() {
   if (viewState === "form") {
     return (
       <div className="space-y-6">
-        <p className="font-lora text-text-secondary text-sm leading-relaxed">
-          When a loved one passes away, the family observes their death anniversary
-          on the same Tithi every year — not the same Gregorian date. Enter the date
-          and city of passing to find when their Tithi falls each year.
+        <p className={`text-text-secondary text-sm leading-relaxed ${teClass}`}>
+          {TITHI_ANNIV.intro[lang]}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Date of passing */}
           <div>
-            <label className="block text-xs text-label mb-1 font-lora">Date of passing</label>
+            <label className={`block text-xs text-label mb-1 ${teClass}`}>{TITHI_ANNIV.dateLabel[lang]}</label>
             <input
               type="date"
               required
@@ -184,23 +188,23 @@ export default function TithiAnniversary() {
               onChange={(e) => setPassingDate(e.target.value)}
               className="w-full px-3 py-2 rounded-md border border-label/20 bg-cream text-text-primary text-sm font-lora focus:outline-none focus:border-accent"
             />
-            <div className="text-[10px] text-label mt-0.5">The date your loved one passed away</div>
+            <div className={`text-[10px] text-label mt-0.5 ${teClass}`}>{TITHI_ANNIV.dateHint[lang]}</div>
           </div>
 
           {/* City at time of passing */}
           <div className="relative">
-            <label className="block text-xs text-label mb-1 font-lora">City at time of passing</label>
+            <label className={`block text-xs text-label mb-1 ${teClass}`}>{TITHI_ANNIV.originCityLabel[lang]}</label>
             <input
               type="text"
               required
               value={originCity}
               onChange={(e) => handleOriginInput(e.target.value)}
-              placeholder="e.g. Hyderabad, Vijayawada, Melbourne"
-              className="w-full px-3 py-2 rounded-md border border-label/20 bg-cream text-text-primary text-sm font-lora focus:outline-none focus:border-accent"
+              placeholder={TITHI_ANNIV.originCityPlaceholder[lang]}
+              className={`w-full px-3 py-2 rounded-md border border-label/20 bg-cream text-text-primary text-sm focus:outline-none focus:border-accent ${teClass}`}
             />
-            <div className="text-[10px] text-label mt-0.5">Used to calculate the precise Tithi at that location</div>
+            <div className={`text-[10px] text-label mt-0.5 ${teClass}`}>{TITHI_ANNIV.originCityHint[lang]}</div>
             {originGeo && (
-              <div className="text-[10px] text-auspicious mt-0.5">&#x2714; {originCity} selected</div>
+              <div className={`text-[10px] text-auspicious mt-0.5 ${teClass}`}>&#x2714; {originCity} {TITHI_ANNIV.selected[lang]}</div>
             )}
             {originResults.length > 0 && !originGeo && (
               <ul className="absolute z-10 w-full mt-1 bg-cream border border-label/20 rounded-lg shadow-lg max-h-40 overflow-y-auto">
@@ -217,32 +221,32 @@ export default function TithiAnniversary() {
                 ))}
               </ul>
             )}
-            {originSearching && <div className="text-[10px] text-label mt-1">Searching...</div>}
+            {originSearching && <div className={`text-[10px] text-label mt-1 ${teClass}`}>{TITHI_ANNIV.searching[lang]}</div>}
           </div>
 
           {/* Current city */}
           {city && (
             <div>
-              <label className="block text-xs text-label mb-1 font-lora">Your current city (for sunrise times)</label>
+              <label className={`block text-xs text-label mb-1 ${teClass}`}>{TITHI_ANNIV.currentCityLabel[lang]}</label>
               <div className="px-3 py-2 rounded-md border border-label/10 bg-label/5 text-text-secondary text-sm font-lora">
                 &#x1F4CD; {city.name} ({city.tz})
               </div>
-              <div className="text-[10px] text-label mt-0.5">Sunrise times shown in your local time</div>
+              <div className={`text-[10px] text-label mt-0.5 ${teClass}`}>{TITHI_ANNIV.currentCityHint[lang]}</div>
             </div>
           )}
 
           {/* Year range */}
           <div>
-            <label className="block text-xs text-label mb-1 font-lora">Show anniversaries for</label>
+            <label className={`block text-xs text-label mb-1 ${teClass}`}>{TITHI_ANNIV.yearsLabel[lang]}</label>
             <select
               value={yearRange}
               onChange={(e) => setYearRange(parseInt(e.target.value, 10))}
-              className="w-full px-3 py-2 rounded-md border border-label/20 bg-cream text-text-primary text-sm font-lora focus:outline-none focus:border-accent"
+              className={`w-full px-3 py-2 rounded-md border border-label/20 bg-cream text-text-primary text-sm focus:outline-none focus:border-accent ${teClass}`}
             >
-              <option value={5}>Next 5 years</option>
-              <option value={10}>Next 10 years</option>
-              <option value={15}>Next 15 years</option>
-              <option value={25}>Next 25 years</option>
+              <option value={5}>{TITHI_ANNIV.next5[lang]}</option>
+              <option value={10}>{TITHI_ANNIV.next10[lang]}</option>
+              <option value={15}>{TITHI_ANNIV.next15[lang]}</option>
+              <option value={25}>{TITHI_ANNIV.next25[lang]}</option>
             </select>
           </div>
 
@@ -251,9 +255,9 @@ export default function TithiAnniversary() {
           <button
             type="submit"
             disabled={!originGeo || !passingDate}
-            className="w-full py-2.5 rounded-md bg-header-grad text-white font-lora text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`w-full py-2.5 rounded-md bg-header-grad text-white text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed ${teClass}`}
           >
-            తిథి కనుగొనండి — Find Tithi
+            {TITHI_ANNIV.findButton[lang]}
           </button>
         </form>
       </div>
@@ -265,8 +269,8 @@ export default function TithiAnniversary() {
     return (
       <div className="flex flex-col items-center justify-center py-16 space-y-4">
         <div className="text-4xl animate-moon-pulse">&#x1F311;</div>
-        <div className="font-playfair italic text-text-secondary">Calculating Tithi...</div>
-        <div className="font-lora text-label text-sm">Looking across the years...</div>
+        <div className={`text-text-secondary ${lang === "te" ? "font-noto-telugu" : "font-playfair italic"}`}>{TITHI_ANNIV.loadingText[lang]}</div>
+        <div className={`text-label text-sm ${teClass}`}>{TITHI_ANNIV.loadingSub[lang]}</div>
       </div>
     );
   }
@@ -287,27 +291,27 @@ export default function TithiAnniversary() {
           <div className="text-xs opacity-70">
             {tithiIdentity.samvatsaram.en} Samvatsaram
           </div>
-          <div className="text-xs opacity-60 mt-2 italic">
-            This is the sacred Tithi to observe every year
+          <div className={`text-xs opacity-60 mt-2 italic ${teClass}`}>
+            {TITHI_ANNIV.sacredTithi[lang]}
           </div>
         </div>
       )}
 
       <button
         onClick={() => setViewState("form")}
-        className="text-sm text-accent hover:underline font-lora"
+        className={`text-sm text-accent hover:underline ${teClass}`}
       >
-        &larr; Search again
+        &larr; {TITHI_ANNIV.searchAgain[lang]}
       </button>
 
       {/* Anniversary list */}
       <div>
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-label mb-1">
-          When does this Tithi fall?
+        <h3 className={`text-xs font-semibold uppercase tracking-wider text-label mb-1 ${lang === "te" ? "font-noto-telugu normal-case" : ""}`}>
+          {TITHI_ANNIV.resultsTitle[lang]}
         </h3>
         {city && (
-          <div className="text-[10px] text-text-secondary mb-3">
-            Shown for your city — {city.name}
+          <div className={`text-[10px] text-text-secondary mb-3 ${teClass}`}>
+            {TITHI_ANNIV.resultsSubtitle[lang]} — {city.name}
           </div>
         )}
 
@@ -330,13 +334,13 @@ export default function TithiAnniversary() {
                 <div className="flex justify-between items-start mb-2">
                   <span className="font-playfair text-lg text-text-primary">{occ.year}</span>
                   {occ.isCurrentYear && (
-                    <span className="px-2 py-0.5 rounded-full bg-accent text-white text-[10px] font-semibold">
-                      THIS YEAR
+                    <span className={`px-2 py-0.5 rounded-full bg-accent text-white text-[10px] font-semibold ${lang === "te" ? "font-noto-telugu" : ""}`}>
+                      {TITHI_ANNIV.thisYear[lang]}
                     </span>
                   )}
                   {isPast && (
-                    <span className="text-[10px] text-label">
-                      {Math.abs(occ.daysFromNow)} days ago
+                    <span className={`text-[10px] text-label ${teClass}`}>
+                      {Math.abs(occ.daysFromNow)} {TITHI_ANNIV.daysAgo[lang]}
                     </span>
                   )}
                 </div>
@@ -347,15 +351,15 @@ export default function TithiAnniversary() {
                 <div className="font-lora text-text-secondary text-sm">
                   {occ.gregorianFormatted}
                 </div>
-                <div className="text-xs text-label mt-1">
-                  &#x1F305; Sunrise: {occ.sunriseTime}
+                <div className={`text-xs text-label mt-1 ${teClass}`}>
+                  &#x1F305; {TITHI_ANNIV.sunriseLabel[lang]}: {occ.sunriseTime}
                   {!isPast && occ.daysFromNow > 0 && (
                     <span className="ml-2 text-accent">
-                      &middot; in {occ.daysFromNow} days
+                      &middot; {occ.daysFromNow} {TITHI_ANNIV.inDays[lang]}
                     </span>
                   )}
                   {occ.daysFromNow === 0 && (
-                    <span className="ml-2 text-accent font-semibold">&middot; Today</span>
+                    <span className="ml-2 text-accent font-semibold">&middot; {TITHI_ANNIV.todayLabel[lang]}</span>
                   )}
                 </div>
 
@@ -369,7 +373,7 @@ export default function TithiAnniversary() {
                           required
                           value={reminderEmail}
                           onChange={(e) => setReminderEmail(e.target.value)}
-                          placeholder="your@email.com"
+                          placeholder={TITHI_ANNIV.reminderEmailPlaceholder[lang]}
                           className="w-full px-2 py-1.5 rounded border border-label/20 bg-cream text-sm font-lora focus:outline-none focus:border-accent"
                         />
                         <textarea
@@ -377,48 +381,48 @@ export default function TithiAnniversary() {
                           onChange={(e) => setReminderNote(e.target.value)}
                           maxLength={300}
                           rows={2}
-                          placeholder="e.g. Light a lamp. Offer favourite sweets."
-                          className="w-full px-2 py-1.5 rounded border border-label/20 bg-cream text-sm font-lora focus:outline-none focus:border-accent resize-none"
+                          placeholder={TITHI_ANNIV.reminderNotePlaceholder[lang]}
+                          className={`w-full px-2 py-1.5 rounded border border-label/20 bg-cream text-sm focus:outline-none focus:border-accent resize-none ${teClass}`}
                         />
                         <select
                           value={reminderDays}
                           onChange={(e) => setReminderDays(parseInt(e.target.value, 10))}
-                          className="w-full px-2 py-1.5 rounded border border-label/20 bg-cream text-sm font-lora focus:outline-none focus:border-accent"
+                          className={`w-full px-2 py-1.5 rounded border border-label/20 bg-cream text-sm focus:outline-none focus:border-accent ${teClass}`}
                         >
-                          <option value={0}>On the day</option>
-                          <option value={1}>1 day before</option>
-                          <option value={2}>2 days before</option>
+                          <option value={0}>{TITHI_ANNIV.onTheDay[lang]}</option>
+                          <option value={1}>{TITHI_ANNIV.oneDayBefore[lang]}</option>
+                          <option value={2}>{TITHI_ANNIV.twoDaysBefore[lang]}</option>
                         </select>
                         <div className="flex gap-2">
                           <button
                             type="button"
                             onClick={() => sendReminder(occ)}
                             disabled={reminderSending || !reminderEmail}
-                            className="flex-1 py-1.5 rounded bg-accent text-white text-xs font-semibold disabled:opacity-50"
+                            className={`flex-1 py-1.5 rounded bg-accent text-white text-xs font-semibold disabled:opacity-50 ${teClass}`}
                           >
-                            {reminderSending ? "Sending..." : "Confirm Reminder"}
+                            {reminderSending ? TITHI_ANNIV.sending[lang] : TITHI_ANNIV.confirmReminder[lang]}
                           </button>
                           <button
                             type="button"
                             onClick={() => setReminderIdx(null)}
-                            className="px-3 py-1.5 rounded border border-label/20 text-xs text-label"
+                            className={`px-3 py-1.5 rounded border border-label/20 text-xs text-label ${teClass}`}
                           >
-                            Cancel
+                            {TITHI_ANNIV.cancel[lang]}
                           </button>
                         </div>
                       </div>
                     ) : (
                       <button
                         onClick={() => setReminderIdx(occ.year)}
-                        className="text-xs text-accent hover:underline font-lora"
+                        className={`text-xs text-accent hover:underline ${teClass}`}
                       >
-                        Set Reminder for this date
+                        {TITHI_ANNIV.setReminderBtn[lang]}
                       </button>
                     )}
                   </div>
                 )}
                 {isSent && (
-                  <div className="mt-2 text-xs text-auspicious">&#x2714; Reminder set</div>
+                  <div className={`mt-2 text-xs text-auspicious ${teClass}`}>&#x2714; {TITHI_ANNIV.reminderSet[lang]}</div>
                 )}
               </div>
             );
@@ -429,18 +433,17 @@ export default function TithiAnniversary() {
       {/* Annual reminder */}
       <div className="rounded-xl border-2 border-gold/30 p-5 bg-gold/5">
         <h3 className="font-noto-telugu text-gold text-sm font-semibold mb-1">
-          ప్రతి సంవత్సరం గుర్తు చేయండి
+          {TITHI_ANNIV.annualReminder.te}
         </h3>
-        <p className="font-lora text-text-secondary text-xs mb-3">
-          Set a reminder for every year automatically. We will find this Tithi each year
-          and remind you — you never need to look it up again.
+        <p className={`text-text-secondary text-xs mb-3 ${teClass}`}>
+          {TITHI_ANNIV.annualReminderDesc[lang]}
         </p>
         <div className="space-y-2">
           <input
             type="email"
             value={reminderEmail}
             onChange={(e) => setReminderEmail(e.target.value)}
-            placeholder="your@email.com"
+            placeholder={TITHI_ANNIV.reminderEmailPlaceholder[lang]}
             className="w-full px-3 py-2 rounded-md border border-gold/20 bg-cream text-sm font-lora focus:outline-none focus:border-gold"
           />
           <textarea
@@ -448,17 +451,17 @@ export default function TithiAnniversary() {
             onChange={(e) => setReminderNote(e.target.value)}
             maxLength={300}
             rows={2}
-            placeholder="A personal prayer or family names to remember..."
-            className="w-full px-3 py-2 rounded-md border border-gold/20 bg-cream text-sm font-lora focus:outline-none focus:border-gold resize-none"
+            placeholder={TITHI_ANNIV.annualNotePlaceholder[lang]}
+            className={`w-full px-3 py-2 rounded-md border border-gold/20 bg-cream text-sm focus:outline-none focus:border-gold resize-none ${teClass}`}
           />
           <select
             value={reminderDays}
             onChange={(e) => setReminderDays(parseInt(e.target.value, 10))}
-            className="w-full px-3 py-2 rounded-md border border-gold/20 bg-cream text-sm font-lora focus:outline-none focus:border-gold"
+            className={`w-full px-3 py-2 rounded-md border border-gold/20 bg-cream text-sm focus:outline-none focus:border-gold ${teClass}`}
           >
-            <option value={0}>On the day</option>
-            <option value={1}>1 day before</option>
-            <option value={2}>2 days before</option>
+            <option value={0}>{TITHI_ANNIV.onTheDay[lang]}</option>
+            <option value={1}>{TITHI_ANNIV.oneDayBefore[lang]}</option>
+            <option value={2}>{TITHI_ANNIV.twoDaysBefore[lang]}</option>
           </select>
           <button
             type="button"
@@ -466,11 +469,11 @@ export default function TithiAnniversary() {
               if (occurrences[0]) sendReminder(occurrences[0]);
             }}
             disabled={!reminderEmail || reminderSending}
-            className="w-full py-2.5 rounded-md bg-gold text-white font-lora text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+            className={`w-full py-2.5 rounded-md bg-gold text-white text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 ${teClass}`}
           >
-            {reminderSending ? "Setting..." : "Set Annual Reminder"}
+            {reminderSending ? TITHI_ANNIV.setting[lang] : TITHI_ANNIV.setAnnual[lang]}
           </button>
-          <div className="text-[10px] text-label text-center">You will receive one reminder per year</div>
+          <div className={`text-[10px] text-label text-center ${teClass}`}>{TITHI_ANNIV.oncePerYear[lang]}</div>
         </div>
       </div>
     </div>
