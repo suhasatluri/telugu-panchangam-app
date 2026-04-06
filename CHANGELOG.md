@@ -34,6 +34,14 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 - Domain: telugupanchangam.app (registrar: Porkbun)
 - DNS: Cloudflare Pages custom domain
 - Email: Resend with verified domain (DKIM ✅ SPF ✅ DMARC ✅)
+- Production secrets — all four now set on Cloudflare Pages:
+  `OPENCAGE_API_KEY`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`,
+  `CRON_SECRET` (`openssl rand -hex 32`, also stored in local
+  `.env.local` for the cron worker auth check)
+- End-to-end reminder pipeline verified live: `POST /api/reminders`
+  on telugupanchangam.app returns `200` with a real reminder id and
+  unsubscribe token, and the bilingual confirmation email is
+  delivered to inbox via `reminders@telugupanchangam.app`
 
 ---
 
