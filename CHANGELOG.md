@@ -77,7 +77,42 @@ Versioning follows [Semantic Versioning](https://semver.org/).
   this commit, users could sign up via `POST /api/reminders` and
   the row was stored in D1, but **no scheduled job ever read those
   rows and sent the reminder on the right Tithi**. The cron worker
-  now closes that loop. 125 unit tests passing (was 109).
+  now closes that loop. 127 unit tests passing (was 109).
+- **`POST /api/reminders` was silently dropping 8 columns** on every
+  insert. The INSERT statement bound 15 values but the table has
+  22+ columns. `tithi_masa_number`, `tithi_paksha`, `tithi_number`,
+  `tithi_description`, `origin_lat`, `origin_lng`, `origin_tz` and
+  `original_date` were never persisted for ANY anniversary signup
+  since the feature shipped. The route schema accepted them; the
+  INSERT just didn't bind them. Fixed by extending the bind list
+  to all 22 columns (commit `ca6aa42`).
+- **`TithiAnniversary.sendReminder()` never sent the identifying
+  triple.** The component had `tithiIdentity.{masaNumber, paksha,
+  tithiNumber}` in state but the POST body only included
+  `tithi_description` (free text). Even after fixing the INSERT,
+  the route would still receive nulls. Now the POST passes the
+  triple from `tithiIdentity`. (commit `ca6aa42`)
+- **`reminderMatcher` used the wrong tithi number convention.**
+  The matcher I shipped earlier in this Unreleased block declared
+  `StoredReminder.tithi_number` as the absolute 1-30 number, but
+  `TithiIdentity`, the API zod schema (`max(15)`) and the entire
+  upstream codebase use paksha-relative 1-15. Krishna paksha rows
+  would have stored e.g. `10` and the matcher would have looked
+  for absolute `10` instead of absolute `25`. Now the matcher
+  derives the absolute target from paksha + relative number:
+  `absolute = paksha === "shukla" ? n : n + 15`. Two new
+  regression tests cover the positive and negative Krishna case
+  (commit `ca6aa42`).
+
+### Added
+- **`TeluguBirthday` now has a "🎂 Set Birthday Reminder" card.**
+  Users could previously find their Telugu birthday for the next
+  5 years but had no way to subscribe to a yearly reminder. The
+  cron worker fully supported the `kind=tithi_anniversary` path —
+  the UI was simply missing. Inline email + days-before + confirm
+  flow matching the TithiAnniversary pattern. POSTs the same
+  identifying triple so the cron can find the day each year
+  (commit `ca6aa42`).
 
 
 These fixes ship between v1.1.1 and the next tagged release. They are
