@@ -14,7 +14,7 @@ export default function AppHeader() {
     <header className="bg-header-grad">
       <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Left: App title */}
-        <Link href="/" className="flex flex-col">
+        <Link href="/" className="flex flex-col justify-center min-h-[44px] py-1">
           <span className="font-noto-telugu text-white text-lg leading-tight">
             తెలుగు పంచాంగం
           </span>
