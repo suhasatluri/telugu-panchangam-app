@@ -92,8 +92,11 @@ export async function GET(request: NextRequest) {
     const results = filtered
       .map((r) => {
         const c = r.components ?? {};
-        const cityName =
+        // Strip "City of " prefix that some councils use as the legal name
+        // (e.g. "City of Melbourne" → "Melbourne").
+        const rawCity =
           c.city || c.town || c.village || c.municipality || c.county || c.state_district || "";
+        const cityName = rawCity.replace(/^City of /i, "");
         const parts = [cityName, c.state, c.country].filter(Boolean);
         const displayName = parts.length > 0 ? parts.join(", ") : r.formatted;
         return {

@@ -246,20 +246,26 @@ export function findTithiAnniversaries(
 
   for (let year = fromYear; year <= toYear; year++) {
     // Centre the scan on the empirical Gregorian midpoint of the target
-    // masa. ±25 days = 51-day window. The wider window is needed because
-    // the Metonic cycle drifts the actual masa start date by up to ±15
-    // days year-to-year, so a tighter window can miss late-edge years
-    // (Magha 2027 ends Feb 26 — outside a ±20 window centred on Jan 29).
-    // 51 days × 5 years × ~5 ms per panchangam call ≈ 1.3 s for an
-    // uncached request, well under the edge CPU budget. KV cache makes
-    // every subsequent identical request return in <1 ms.
+    // masa. ±35 days = 71-day window.
+    //
+    // History of this constant:
+    //   75  → legacy "month-01 + 75" approach (correct but slow)
+    //   41  → ±20 (too tight, missed Magha 2027)
+    //   51  → ±25 (too tight, missed Chaitra Krishna Dashami in late-Ugadi
+    //         years like 2027/2029 where the day lands ~May 1)
+    //   71  → ±35 (current)
+    //
+    // The Metonic cycle drifts the actual masa start by up to ±18 days
+    // year-to-year. Combined with a masa span of ~30 days, a Tithi at
+    // either end of its masa needs ~35 days of slack to be reliably
+    // caught in every year of a 5-year search.
     const midpoint = estimateMasaMidpoint(tithiIdentity.masaNumber, year);
-    const searchStart = addDays(midpoint, -25);
+    const searchStart = addDays(midpoint, -35);
 
     let found = false;
     let current = searchStart;
 
-    for (let i = 0; i < 51 && !found; i++) {
+    for (let i = 0; i < 71 && !found; i++) {
       try {
         const p = calculateDayPanchangam(current, location);
 
