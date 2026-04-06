@@ -319,6 +319,7 @@ function AngaCard({
 
   return (
     <div
+      data-testid="anga-card"
       className={`p-3 rounded-lg border ${borderColor} bg-cream cursor-pointer
         hover:-translate-y-0.5 hover:shadow-md hover:shadow-label/10 transition-all duration-150
         animate-fade-up`}

@@ -45,19 +45,21 @@ test.describe("Mobile Layout — Day Detail", () => {
     await page.goto("/2026/4/2");
     await page.waitForLoadState("networkidle");
 
-    const tithiCard = page.locator('div:has-text("TITHI")').first();
-    const nakshatraCard = page.locator('div:has-text("NAKSHATRA")').first();
+    // Each AngaCard tags itself with [data-testid="anga-card"]. The first
+    // two cards (Tithi, Nakshatra) should sit on the same row in the
+    // grid-cols-2 mobile layout.
+    const cards = page.locator('[data-testid="anga-card"]');
+    await expect(cards.first()).toBeVisible();
+    expect(await cards.count()).toBeGreaterThanOrEqual(2);
 
-    if ((await tithiCard.isVisible()) && (await nakshatraCard.isVisible())) {
-      const tithiBox = await tithiCard.boundingBox();
-      const nakshatraBox = await nakshatraCard.boundingBox();
+    const tithiBox = await cards.nth(0).boundingBox();
+    const nakshatraBox = await cards.nth(1).boundingBox();
 
-      if (tithiBox && nakshatraBox) {
-        const viewport = page.viewportSize();
-        if (viewport && viewport.width < 640) {
-          expect(Math.abs(tithiBox.y - nakshatraBox.y)).toBeLessThan(20);
-          expect(nakshatraBox.x).toBeGreaterThan(tithiBox.x + 50);
-        }
+    if (tithiBox && nakshatraBox) {
+      const viewport = page.viewportSize();
+      if (viewport && viewport.width < 640) {
+        expect(Math.abs(tithiBox.y - nakshatraBox.y)).toBeLessThan(20);
+        expect(nakshatraBox.x).toBeGreaterThan(tithiBox.x + 50);
       }
     }
   });

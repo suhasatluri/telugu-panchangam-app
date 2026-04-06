@@ -23,7 +23,7 @@ export default function LanguageToggle() {
   return (
     <button
       onClick={toggle}
-      className="flex items-center gap-1 px-3 py-1.5 rounded-md border border-label/30 hover:bg-label/10 transition-colors text-sm"
+      className="flex items-center gap-1 px-3 py-2 min-h-[44px] rounded-md border border-label/30 hover:bg-label/10 transition-colors text-sm"
       aria-label="Toggle language"
     >
       <span

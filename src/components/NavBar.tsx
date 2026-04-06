@@ -199,7 +199,7 @@ export default function NavBar() {
           <div className="flex items-center gap-1 relative">
             <button
               onClick={() => goToMonth(year, month)}
-              className={`px-3 py-1 text-sm rounded-md transition-all ${
+              className={`px-3 py-2 min-h-[40px] text-sm rounded-md transition-all ${
                 view === "month"
                   ? "bg-accent/10 text-accent font-semibold"
                   : "text-text-secondary hover:bg-label/10"
@@ -210,7 +210,7 @@ export default function NavBar() {
             </button>
             <button
               onClick={() => goToDay(year, month, day)}
-              className={`px-3 py-1 text-sm rounded-md transition-all ${
+              className={`px-3 py-2 min-h-[40px] text-sm rounded-md transition-all ${
                 view === "day"
                   ? "bg-accent/10 text-accent font-semibold"
                   : "text-text-secondary hover:bg-label/10"
