@@ -69,6 +69,11 @@ export default function CalendarGrid({
         </div>
       )}
 
+      {/* Mobile hint — only on small screens */}
+      <div className="sm:hidden text-[11px] text-label/70 italic font-lora text-center pb-1.5">
+        {lang === "te" ? "పండుగలకు రోజు నొక్కండి" : "Tap any day to see festivals"}
+      </div>
+
       {/* Weekday headers */}
       <div className="grid grid-cols-7 gap-px mb-1">
         {headers.map((h, i) => (
@@ -106,6 +111,9 @@ export default function CalendarGrid({
           if (day.isAmavasya) bgClass = "bg-text-primary/5 hover:bg-text-primary/10";
           else if (day.isPurnima) bgClass = "bg-gold/10 hover:bg-gold/15";
           else if (day.isEkadashi) bgClass = "bg-auspicious/5 hover:bg-auspicious/10";
+          // Mobile-only faint tint for any other festival day so the
+          // dot doesn't feel orphaned without a name beside it.
+          else if (hasFestival) bgClass = "bg-accent/[0.04] sm:bg-cream hover:bg-accent/10";
 
           return (
             <Link
@@ -139,45 +147,70 @@ export default function CalendarGrid({
 
               {/* Festival badges */}
               {hasFestival && (
-                <div className="mt-0.5 space-y-0.5">
-                  {day.festivals.slice(0, 2).map((f, fi) => {
-                    const isSig = f.isSignificantEkadashi;
-                    const dotColor = isSig
-                      ? "bg-gold"
-                      : f.tier === 1
+                <>
+                  {/* Mobile (< sm): dots only — no truncated text */}
+                  <div className="flex items-center gap-0.5 mt-0.5 sm:hidden">
+                    {day.festivals.slice(0, 3).map((f, fi) => {
+                      const dotColor = f.isSignificantEkadashi
                         ? "bg-gold"
-                        : f.tier === 2
-                          ? "bg-accent"
-                          : "bg-label/40";
-                    const textColor = isSig
-                      ? "text-gold font-bold"
-                      : f.tier === 1
-                        ? "text-gold"
-                        : f.tier === 2
-                          ? "text-accent"
-                          : "text-label";
-                    return (
-                      <div key={fi} className="flex items-center gap-0.5">
+                        : f.tier === 1
+                          ? "bg-gold"
+                          : f.tier === 2
+                            ? "bg-accent"
+                            : "bg-label/40";
+                      return (
                         <span
+                          key={fi}
                           className={`w-1.5 h-1.5 rounded-full ${dotColor} inline-block flex-shrink-0`}
                         />
-                        <span
-                          className={`text-[10px] ${textColor} truncate ${
-                            lang === "te" ? "font-noto-telugu" : "font-lora"
-                          }`}
-                        >
-                          {isSig ? "✨ " : ""}
-                          {lang === "te" ? f.te : f.en}
-                        </span>
-                      </div>
-                    );
-                  })}
-                  {day.festivals.length > 2 && (
-                    <span className="text-[9px] text-label">
-                      +{day.festivals.length - 2}
-                    </span>
-                  )}
-                </div>
+                      );
+                    })}
+                    {day.festivals.length > 3 && (
+                      <span className="text-[9px] text-label leading-none">+</span>
+                    )}
+                  </div>
+
+                  {/* Tablet/Desktop (sm+): dot + name */}
+                  <div className="hidden sm:block mt-0.5 space-y-0.5">
+                    {day.festivals.slice(0, 2).map((f, fi) => {
+                      const isSig = f.isSignificantEkadashi;
+                      const dotColor = isSig
+                        ? "bg-gold"
+                        : f.tier === 1
+                          ? "bg-gold"
+                          : f.tier === 2
+                            ? "bg-accent"
+                            : "bg-label/40";
+                      const textColor = isSig
+                        ? "text-gold font-bold"
+                        : f.tier === 1
+                          ? "text-gold"
+                          : f.tier === 2
+                            ? "text-accent"
+                            : "text-label";
+                      return (
+                        <div key={fi} className="flex items-center gap-0.5">
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${dotColor} inline-block flex-shrink-0`}
+                          />
+                          <span
+                            className={`text-[10px] ${textColor} truncate max-w-[70px] lg:max-w-none ${
+                              lang === "te" ? "font-noto-telugu" : "font-lora"
+                            }`}
+                          >
+                            {isSig ? "✨ " : ""}
+                            {lang === "te" ? f.te : f.en}
+                          </span>
+                        </div>
+                      );
+                    })}
+                    {day.festivals.length > 2 && (
+                      <span className="text-[9px] text-label">
+                        +{day.festivals.length - 2}
+                      </span>
+                    )}
+                  </div>
+                </>
               )}
             </Link>
           );
