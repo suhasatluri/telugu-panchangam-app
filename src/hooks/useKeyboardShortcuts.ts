@@ -115,6 +115,11 @@ export function useKeyboardShortcuts(options: ShortcutOptions = {}) {
           e.preventDefault();
           router.push("/reminders");
           break;
+        case "/":
+          if (isModalOpen()) return;
+          e.preventDefault();
+          router.push("/about");
+          break;
         case "?":
           e.preventDefault();
           if (onLearnModal) onLearnModal();

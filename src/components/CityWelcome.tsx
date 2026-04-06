@@ -133,6 +133,12 @@ export default function CityWelcome({ isChanging, onDismiss }: CityWelcomeProps)
           <p className="font-lora italic text-label/60 text-xs mt-2 leading-relaxed">
             Panchangam timings vary by location. A puja in Melbourne and a puja in Hyderabad start at different times.
           </p>
+          <a
+            href="/about"
+            className="inline-block font-lora text-xs text-accent hover:underline mt-3"
+          >
+            See how it works →
+          </a>
         </div>
 
         {/* Quick select cities */}

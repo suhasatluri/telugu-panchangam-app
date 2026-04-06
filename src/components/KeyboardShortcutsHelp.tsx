@@ -27,6 +27,7 @@ const PAGE_ROWS: Row[] = [
   { keys: ["U"], en: "Muhurtam", te: "ముహూర్తం" },
   { keys: ["N"], en: "Nakshatra", te: "నక్షత్రం" },
   { keys: ["R"], en: "Reminders", te: "రిమైండర్లు" },
+  { keys: ["/"], en: "How it works", te: "ఎలా పని చేస్తుంది" },
   { keys: ["S"], en: "Share / Copy URL", te: "షేర్ / లింక్ కాపీ" },
   { keys: ["P"], en: "Print (month only)", te: "ముద్రణ (నెల మాత్రమే)" },
   { keys: ["?"], en: "This help screen", te: "ఈ సహాయ స్క్రీన్" },

@@ -64,6 +64,12 @@ export default function AppHeader() {
             <span className="font-noto-telugu">పితృ స్మరణ</span>
             <span className="ml-1">Reminders</span>
           </Link>
+          <Link
+            href="/about"
+            className="flex-shrink-0 inline-flex items-center min-h-[40px] py-2 text-white/70 hover:text-white text-xs font-lora italic transition-colors"
+          >
+            How it works?
+          </Link>
           {/* Trailing spacer so the last link is fully scrollable into view */}
           <span className="flex-shrink-0 pr-2" aria-hidden="true" />
         </div>
