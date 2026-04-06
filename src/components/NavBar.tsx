@@ -2,6 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { getLang } from "@/lib/cache";
+import type { Lang } from "@/lib/i18n";
+import KeyboardShortcutsHelp from "./KeyboardShortcutsHelp";
+import Toast from "./Toast";
 
 type View = "month" | "day";
 
@@ -35,6 +40,31 @@ export default function NavBar() {
 
   const [dateInput, setDateInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const [showHelp, setShowHelp] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [lang, setLangState] = useState<Lang>("en");
+
+  useEffect(() => {
+    setLangState(getLang());
+  }, []);
+
+  const handleShare = useCallback(() => {
+    if (typeof window === "undefined") return;
+    navigator.clipboard
+      .writeText(window.location.href)
+      .then(() => setToastVisible(true))
+      .catch(() => {});
+  }, []);
+
+  useKeyboardShortcuts({
+    year,
+    month,
+    day,
+    view,
+    onPrint: () => window.print(),
+    onShare: handleShare,
+    onLearnModal: () => setShowHelp(true),
+  });
 
   // Today check
   const now = new Date();
@@ -45,7 +75,18 @@ export default function NavBar() {
     year === todayYear && month === todayMonth && day === todayDay;
 
   // Don't show on home page (it redirects immediately)
-  if (pathname === "/") return null;
+  if (pathname === "/") {
+    return (
+      <>
+        <KeyboardShortcutsHelp isOpen={showHelp} onClose={() => setShowHelp(false)} lang={lang} />
+        <Toast
+          message={lang === "te" ? "✓ లింక్ కాపీ అయింది!" : "✓ Link copied!"}
+          visible={toastVisible}
+          onHide={() => setToastVisible(false)}
+        />
+      </>
+    );
+  }
 
   const goToDay = (y: number, m: number, d: number) => {
     router.push(`/${y}/${m}/${d}`);
@@ -140,7 +181,8 @@ export default function NavBar() {
   const displayDate = `${day} ${monthNames[month - 1]} ${year}`;
 
   return (
-    <div className="bg-cream border-b border-label/10">
+    <>
+    <div className="bg-cream border-b border-label/10 no-print">
       <div className="max-w-4xl mx-auto px-4 py-2">
         {/* Top row: arrows + tabs + today */}
         <div className="flex items-center justify-between gap-2">
@@ -196,6 +238,15 @@ export default function NavBar() {
                 Today
               </button>
             )}
+            <button
+              onClick={() => setShowHelp(true)}
+              className="hidden md:flex items-center gap-1 ml-1 px-1.5 text-xs text-label/50 hover:text-accent transition-colors no-print"
+              title="Keyboard shortcuts (?)"
+              aria-label="Keyboard shortcuts"
+            >
+              <span className="text-base">&#x2328;&#xFE0F;</span>
+              <span className="font-mono">?</span>
+            </button>
           </div>
         </div>
 
@@ -215,5 +266,12 @@ export default function NavBar() {
         </div>
       </div>
     </div>
+    <KeyboardShortcutsHelp isOpen={showHelp} onClose={() => setShowHelp(false)} lang={lang} />
+    <Toast
+      message={lang === "te" ? "✓ లింక్ కాపీ అయింది!" : "✓ Link copied!"}
+      visible={toastVisible}
+      onHide={() => setToastVisible(false)}
+    />
+    </>
   );
 }
