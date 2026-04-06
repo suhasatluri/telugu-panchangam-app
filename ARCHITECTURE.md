@@ -251,6 +251,8 @@ All endpoints are at `/api/`. They are public — no authentication required. Cl
 | `/api/geocode` | GET | City → lat/lng/timezone |
 | `/api/muhurtam` | GET | Auspicious time windows |
 | `/api/nakshatra` | GET | Janma Nakshatra from birth details |
+| `/api/reminders` | GET/POST | Upcoming Amavasya/Ekadashi list + create reminder |
+| `/api/reminders/unsubscribe` | GET | One-click email unsubscribe |
 
 Full specification in `API.md`.
 
@@ -277,6 +279,8 @@ app/
   page.tsx                    ← Today's Panchangam (default city)
   [year]/[month]/page.tsx     ← Month view
   [year]/[month]/[day]/page.tsx ← Day detail (full Panchanga)
+  error.tsx                   ← Error boundary — catches runtime errors
+  not-found.tsx               ← Custom 404 page
 ```
 
 ### Component Hierarchy
@@ -301,12 +305,42 @@ app/
   │   ├── <WeekdayRow>
   │   └── <DayCell[]>         ← Tithi, moon phase icon, festival badge
   │
+  ├── <CityWelcome>           ← Full-screen first-visit city selector
+  │
   ├── <FestivalTracker>       ← Year view of all festivals
   │
   ├── <MuhurtamFinder>        ← Date range → auspicious windows
   │
-  └── <NakshatraFinder>       ← Birth details → Janma Nakshatra
+  ├── <NakshatraFinder>       ← Birth details → Janma Nakshatra
+  │
+  ├── <Tooltip>               ← Hover/tap tooltips on Panchanga elements
+  │
+  ├── <LearnModal>            ← "What is Panchangam?" bilingual explainer
+  │
+  ├── <ErrorState>            ← Reusable error display with retry
+  │
+  └── <LoadingState>          ← Reusable loading skeleton
 ```
+
+### Error Handling
+
+The app uses a layered error handling strategy:
+
+```
+error.tsx (root error boundary)
+  └── Catches unhandled runtime errors → renders ErrorState with retry button
+
+not-found.tsx (404 handler)
+  └── Custom 404 page with navigation back to home
+
+<ErrorState> (reusable component)
+  └── Used within pages/components for API errors, graceful fallback
+
+<LoadingState> (reusable component)
+  └── Consistent loading skeleton across all async data fetches
+```
+
+First-time visitors without a saved city see `<CityWelcome>` — a full-screen guided city selector — instead of silently defaulting.
 
 ### Language Handling
 

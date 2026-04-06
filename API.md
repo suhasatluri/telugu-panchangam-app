@@ -19,10 +19,13 @@ The Telugu Panchangam API is **free and open** — no registration, no API keys,
 5. [GET /api/geocode](#get-apigeocode)
 6. [GET /api/muhurtam](#get-apimuhurtam)
 7. [GET /api/nakshatra](#get-apinakshatra)
-8. [Error Codes](#error-codes)
-9. [Data Types](#data-types)
-10. [Code Examples](#code-examples)
-11. [Self-Hosting](#self-hosting)
+8. [GET /api/reminders](#get-apireminders)
+9. [POST /api/reminders](#post-apireminders)
+10. [GET /api/reminders/unsubscribe](#get-apiremindersunsubscribe)
+11. [Error Codes](#error-codes)
+12. [Data Types](#data-types)
+13. [Code Examples](#code-examples)
+14. [Self-Hosting](#self-hosting)
 
 ---
 
@@ -490,6 +493,57 @@ GET /api/nakshatra?date={date}&time={time}&lat={lat}&lng={lng}&tz={tz}&today_lat
   }
 }
 ```
+
+---
+
+## GET /api/reminders
+
+Returns upcoming Amavasya and Ekadashi dates for a location.
+
+### Request
+
+```
+GET /api/reminders?lat={lat}&lng={lng}&tz={tz}&count={count}
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `lat` | number | Yes | Latitude |
+| `lng` | number | Yes | Longitude |
+| `tz` | string | Yes | IANA timezone |
+| `count` | number | No | Number of upcoming dates (default: 6, max: 12) |
+
+---
+
+## POST /api/reminders
+
+Creates an email reminder for Amavasya, Ekadashi, or a Tithi anniversary date.
+
+### Request Body (JSON)
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `email` | string | Yes | Email address for reminder |
+| `name` | string | Yes | Ancestor or person name |
+| `city_name` | string | Yes | City name for display |
+| `lat` | number | Yes | Latitude |
+| `lng` | number | Yes | Longitude |
+| `tz` | string | Yes | IANA timezone |
+| `tithi_types` | string[] | Yes | Types to remind: `["amavasya"]`, `["ekadashi"]`, etc. |
+| `reminder_type` | string | No | `amavasya`, `ekadashi`, or `tithi_anniversary` (default: `amavasya`) |
+| `remind_days_before` | number | No | Days before the event (0–2, default: 0) |
+| `remind_time` | string | No | Preferred reminder time |
+| `personal_note` | string | No | Personal note (max 300 chars) |
+
+Sends a bilingual confirmation email via Resend. Stores reminder in Cloudflare D1.
+
+---
+
+## GET /api/reminders/unsubscribe
+
+One-click email unsubscribe. Returns an HTML page confirming cancellation.
 
 ---
 
