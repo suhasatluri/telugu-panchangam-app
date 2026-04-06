@@ -388,13 +388,20 @@ export default function TeluguBirthday() {
                 </div>
                 <div className={`text-xs text-label mt-1 ${teClass}`}>
                   🌅 {TITHI_ANNIV.sunriseLabel[lang]}: {occ.sunriseTime}
-                  {!isPast && occ.daysFromNow > 0 && (
+                  {occ.daysFromNow === 0 && (
+                    <span className="ml-2 text-gold font-bold">
+                      · 🎂 {TITHI_ANNIV.todayLabel[lang]}!
+                    </span>
+                  )}
+                  {occ.daysFromNow > 0 && (
                     <span className="ml-2 text-accent">
                       · {occ.daysFromNow} {TITHI_ANNIV.inDays[lang]}
                     </span>
                   )}
-                  {occ.daysFromNow === 0 && (
-                    <span className="ml-2 text-accent font-semibold">· {TITHI_ANNIV.todayLabel[lang]}</span>
+                  {occ.daysFromNow < 0 && (
+                    <span className="ml-2 text-label/60">
+                      · {Math.abs(occ.daysFromNow)} {TITHI_ANNIV.daysAgo[lang]}
+                    </span>
                   )}
                 </div>
               </div>

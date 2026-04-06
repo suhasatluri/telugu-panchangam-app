@@ -190,30 +190,37 @@ export function getTithiForDate(
 }
 
 /**
- * Approximate Gregorian midpoint for each Telugu masa. The actual span of a
- * masa drifts ±15 days year-to-year due to lunar/solar misalignment, so a
- * ±20 day window centred on this point reliably contains every Tithi for
- * the given masa across all years in the modern era.
+ * Approximate Gregorian midpoint for each Telugu masa within a given
+ * CALENDAR year. The actual span of a masa drifts ±15 days year-to-year
+ * due to lunar/solar misalignment, so a ±20 day window centred on this
+ * point reliably contains every Tithi for that masa.
+ *
+ * NOTE on year semantics: the `year` argument is the Gregorian calendar
+ * year — NOT the Telugu samvatsaram. So Magha and Phalguna for `year =
+ * 2026` are searched in Jan/Feb 2026 (which actually belong to the
+ * Krodhi samvatsaram), not Jan/Feb 2027. This matches user expectation
+ * of "show me my Telugu birthday for 2026, 2027, ..." — they expect a
+ * date that lands in the matching calendar year, not a date that
+ * matches the same samvatsaram cycle.
  */
-const MASA_MIDPOINT: Array<{ month: number; day: number; nextYear?: boolean }> = [
-  { month: 4, day: 4 },                       // 1  Chaitra
-  { month: 5, day: 4 },                       // 2  Vaishakha
-  { month: 6, day: 3 },                       // 3  Jyeshtha
-  { month: 7, day: 3 },                       // 4  Ashadha
-  { month: 8, day: 2 },                       // 5  Shravana
-  { month: 9, day: 1 },                       // 6  Bhadrapada
-  { month: 10, day: 1 },                      // 7  Ashvina
-  { month: 10, day: 31 },                     // 8  Kartika
-  { month: 11, day: 30 },                     // 9  Margashira
-  { month: 12, day: 30 },                     // 10 Pushya
-  { month: 1, day: 29, nextYear: true },      // 11 Magha
-  { month: 2, day: 28, nextYear: true },      // 12 Phalguna
+const MASA_MIDPOINT: Array<{ month: number; day: number }> = [
+  { month: 4, day: 4 },    // 1  Chaitra      (Mar 20 – Apr 18)
+  { month: 5, day: 4 },    // 2  Vaishakha    (Apr 19 – May 18)
+  { month: 6, day: 3 },    // 3  Jyeshtha     (May 19 – Jun 17)
+  { month: 7, day: 3 },    // 4  Ashadha      (Jun 18 – Jul 17)
+  { month: 8, day: 2 },    // 5  Shravana     (Jul 18 – Aug 16)
+  { month: 9, day: 1 },    // 6  Bhadrapada   (Aug 17 – Sep 15)
+  { month: 10, day: 1 },   // 7  Ashvina      (Sep 16 – Oct 15)
+  { month: 10, day: 31 },  // 8  Kartika      (Oct 16 – Nov 13)
+  { month: 11, day: 30 },  // 9  Margashira   (Nov 14 – Dec 13)
+  { month: 12, day: 30 },  // 10 Pushya       (Dec 14 – Jan 12 next yr)
+  { month: 1, day: 29 },   // 11 Magha        (Jan 13 – Feb 11) — same calendar year
+  { month: 2, day: 28 },   // 12 Phalguna     (Feb 12 – Mar 19) — same calendar year
 ];
 
 function estimateMasaMidpoint(masaNumber: number, year: number): string {
   const m = MASA_MIDPOINT[masaNumber - 1];
-  const gregYear = m.nextYear ? year + 1 : year;
-  return `${gregYear}-${String(m.month).padStart(2, "0")}-${String(m.day).padStart(2, "0")}`;
+  return `${year}-${String(m.month).padStart(2, "0")}-${String(m.day).padStart(2, "0")}`;
 }
 
 /**
@@ -239,16 +246,20 @@ export function findTithiAnniversaries(
 
   for (let year = fromYear; year <= toYear; year++) {
     // Centre the scan on the empirical Gregorian midpoint of the target
-    // masa. ±20 days = 41-day window. This is ~45 % less work than the
-    // previous "month-01 + 75 days" approach yet still covers every
-    // possible Gregorian landing for the masa across modern years.
+    // masa. ±25 days = 51-day window. The wider window is needed because
+    // the Metonic cycle drifts the actual masa start date by up to ±15
+    // days year-to-year, so a tighter window can miss late-edge years
+    // (Magha 2027 ends Feb 26 — outside a ±20 window centred on Jan 29).
+    // 51 days × 5 years × ~5 ms per panchangam call ≈ 1.3 s for an
+    // uncached request, well under the edge CPU budget. KV cache makes
+    // every subsequent identical request return in <1 ms.
     const midpoint = estimateMasaMidpoint(tithiIdentity.masaNumber, year);
-    const searchStart = addDays(midpoint, -20);
+    const searchStart = addDays(midpoint, -25);
 
     let found = false;
     let current = searchStart;
 
-    for (let i = 0; i < 41 && !found; i++) {
+    for (let i = 0; i < 51 && !found; i++) {
       try {
         const p = calculateDayPanchangam(current, location);
 
