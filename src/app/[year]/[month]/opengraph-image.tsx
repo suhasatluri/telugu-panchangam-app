@@ -74,7 +74,7 @@ export default function OGImage({ params }: Props) {
           Calendar
         </div>
         <div style={{ fontSize: "20px", color: "#8B4020", opacity: 0.6, marginTop: "32px" }}>
-          telugu-panchangam-app.pages.dev
+          telugupanchangam.app
         </div>
       </div>
     ),

@@ -96,7 +96,7 @@ export default function PrintableCalendar({
 
       <div className="print-footer">
         <div>తెలుగు పంచాంగం &middot; Telugu Panchangam</div>
-        <div>telugu-panchangam-app.pages.dev &middot; Free, open-source, for the community</div>
+        <div>telugupanchangam.app &middot; Free, open-source, for the community</div>
         <div style={{ color: "#8B4020" }}>
           Timings calculated for {cityName}. Dates may differ from Indian printed calendars due to timezone differences.
         </div>

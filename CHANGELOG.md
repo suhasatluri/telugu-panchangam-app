@@ -6,6 +6,37 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [1.2.0] — 2026-04-07: Custom domain + verified email
+
+### Changed
+- **App is now live at https://telugupanchangam.app** (was
+  https://telugu-panchangam-app.pages.dev). The Cloudflare Pages
+  preview hostname still works as a fallback.
+- **Reminder emails sent from `reminders@telugupanchangam.app`**.
+  Domain is verified in Resend with DKIM, SPF and DMARC all passing
+  — emails should now land in inbox reliably instead of spam.
+- All internal URL references updated: `src/lib/constants.ts` (new),
+  `src/app/layout.tsx` `metadataBase` and `openGraph.url`,
+  `src/app/[year]/[month]/{,[day]/}opengraph-image.tsx`,
+  `src/app/[year]/[month]/[day]/page.tsx` `generateMetadata`,
+  `src/components/PrintableCalendar.tsx` print footer,
+  `src/components/TeluguBirthday.tsx` share message,
+  `public/og-image.svg`, `README.md`, `API.md`, `.env.example`.
+- `public/og-image.png` regenerated from the updated SVG with sharp
+  (now a real PNG with the new domain baked into the social card).
+
+### Added
+- `src/lib/constants.ts` — single source of truth for `APP_URL`,
+  `APP_HOST`, `REPORT_EMAIL`, `REMINDER_FROM_EMAIL` and `GITHUB_REPO`
+  so a future domain change is one edit instead of grep-and-replace.
+
+### Infrastructure
+- Domain: telugupanchangam.app (registrar: Porkbun)
+- DNS: Cloudflare Pages custom domain
+- Email: Resend with verified domain (DKIM ✅ SPF ✅ DMARC ✅)
+
+---
+
 ## [Unreleased]
 
 These fixes ship between v1.1.1 and the next tagged release. They are
@@ -234,7 +265,7 @@ detailed feature history.
 - 75+ engine tests including 26 Venkatrama regression assertions
 - Public API — free, no key required, 7 endpoints
 - PWA manifest + service worker (icons later replaced with real PNGs in v1.1.0)
-- Live at https://telugu-panchangam-app.pages.dev
+- Live at https://telugupanchangam.app
 
 ---
 
@@ -263,7 +294,7 @@ detailed feature history.
 ### Changed
 - next.config.mjs: dynamic import of setupDevPlatform (dev only)
 - wrangler.toml: pages_build_output_dir, nodejs_compat_v2 flag
-- README + API.md: live URL updated to telugu-panchangam-app.pages.dev
+- README + API.md: live URL updated to telugupanchangam.app
 
 ---
 

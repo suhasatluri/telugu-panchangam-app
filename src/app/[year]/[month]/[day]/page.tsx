@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: DayPageProps): Promise<Metada
     openGraph: {
       title: `పంచాంగం ${dateStr}`,
       description: `Telugu Panchangam for ${dateStr}`,
-      url: `https://telugu-panchangam-app.pages.dev/${year}/${month}/${day}`,
+      url: `https://telugupanchangam.app/${year}/${month}/${day}`,
     },
   };
 }

@@ -142,8 +142,8 @@ export default function TeluguBirthday() {
     const thisYear = occurrences.find((o) => o.isCurrentYear) ?? occurrences[0];
     const message =
       lang === "te"
-        ? `నా తెలుగు పుట్టినరోజు ${thisYear.gregorianFormatted} (${thisYear.teluguFormatted})\ntelugu-panchangam-app.pages.dev ద్వారా కనుగొన్నాను`
-        : `My Telugu birthday this year is ${thisYear.gregorianFormatted} (${tithiIdentity.description})\nFound using telugu-panchangam-app.pages.dev`;
+        ? `నా తెలుగు పుట్టినరోజు ${thisYear.gregorianFormatted} (${thisYear.teluguFormatted})\ntelugupanchangam.app ద్వారా కనుగొన్నాను`
+        : `My Telugu birthday this year is ${thisYear.gregorianFormatted} (${tithiIdentity.description})\nFound using telugupanchangam.app`;
     navigator.clipboard
       .writeText(message)
       .then(() => {

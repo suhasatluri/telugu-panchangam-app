@@ -23,7 +23,7 @@ export default async function OGImage({ params }: Props) {
   let nakshatraEn = "";
   try {
     const res = await fetch(
-      `https://telugu-panchangam-app.pages.dev/api/panchangam?date=${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}&lat=-37.8136&lng=144.9631&tz=Australia/Melbourne`,
+      `https://telugupanchangam.app/api/panchangam?date=${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}&lat=-37.8136&lng=144.9631&tz=Australia/Melbourne`,
       { next: { revalidate: 86400 } }
     );
     if (res.ok) {
@@ -93,7 +93,7 @@ export default async function OGImage({ params }: Props) {
           </div>
         )}
         <div style={{ fontSize: "20px", color: "#8B4020", opacity: 0.6, marginTop: "16px" }}>
-          telugu-panchangam-app.pages.dev
+          telugupanchangam.app
         </div>
       </div>
     ),

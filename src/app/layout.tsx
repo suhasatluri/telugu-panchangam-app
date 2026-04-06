@@ -26,12 +26,12 @@ export const metadata: Metadata = {
   authors: [{ name: "Suhas Atluri" }],
   creator: "Suhas Atluri",
   publisher: "Telugu Panchangam",
-  metadataBase: new URL("https://telugu-panchangam-app.pages.dev"),
+  metadataBase: new URL("https://telugupanchangam.app"),
   openGraph: {
     type: "website",
     locale: "te_IN",
     alternateLocale: "en_AU",
-    url: "https://telugu-panchangam-app.pages.dev",
+    url: "https://telugupanchangam.app",
     siteName: "తెలుగు పంచాంగం",
     title: "తెలుగు పంచాంగం — Telugu Panchangam",
     description:
