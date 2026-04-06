@@ -48,6 +48,19 @@ follow-ups to the mobile hotfix discovered while iterating on CI.
 - AppHeader title `<Link>` was rendering at 38.5 px (two stacked text
   lines, no padding) — below the 44 px touch-target floor. Bumped to
   `min-h-[44px] py-1 justify-center` (commit `1b9e717`).
+- AppHeader nav `<Link>`s (Festivals / Muhurtam / Nakshatra / Reminders)
+  were rendering at 18 px (`text-xs` with no padding) — caught by the
+  e2e touch-target test once the previous offenders were fixed. Bumped
+  to `inline-flex items-center min-h-[40px] py-2`. Visual layout
+  unchanged (commit `0f61d24`).
+- CityWelcome modal now has `role="dialog"`, `aria-modal="true"` and
+  `data-testid="city-welcome"`. The e2e CityWelcome tests were
+  accidentally clicking the AppHeader's `CitySearch` button (which
+  also displays "Melbourne" when localStorage is empty) instead of the
+  modal's quick-select button. Tests now scope locators with
+  `getByTestId("city-welcome")`. Bonus: the keyboard-shortcuts hook
+  now correctly disables shortcuts while CityWelcome is showing
+  (commit `0f61d24`).
 - `next.config.mjs`: skip `setupDevPlatform` when `process.env.CI` is set
   and wrap the import in `try/catch`. Stops Playwright e2e from crashing
   in CI with `Cannot find module 'wrangler'` (commit `6efaa1f`).
