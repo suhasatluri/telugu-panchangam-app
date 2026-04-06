@@ -245,27 +245,42 @@ export function findTithiAnniversaries(
       : tithiIdentity.tithiNumber + 15;
 
   for (let year = fromYear; year <= toYear; year++) {
-    // Centre the scan on the empirical Gregorian midpoint of the target
-    // masa. ±35 days = 71-day window.
+    // Asymmetric scan window centred on the empirical masa midpoint:
+    //   start = midpoint - 25 days
+    //   end   = midpoint + 60 days   (86 days total)
+    //
+    // The asymmetry handles Adhika Masa (intercalary month) years.
+    // When the calendar inserts an Adhika masa BEFORE the regular masa,
+    // the regular masa is shifted ~30 days LATER than usual. Vaisakha
+    // 2029 is a real example: Adhika Vaisakha runs Apr 14 – May 13,
+    // regular Vaisakha runs May 14 – June 12. A Krishna Amavasya born
+    // in Vaisakha lands on June 12 in 2029 — far past a symmetric ±35
+    // window centred on May 4 (which ends June 8). The +60 tail catches
+    // these post-Adhika regular months.
     //
     // History of this constant:
-    //   75  → legacy "month-01 + 75" approach (correct but slow)
-    //   41  → ±20 (too tight, missed Magha 2027)
-    //   51  → ±25 (too tight, missed Chaitra Krishna Dashami in late-Ugadi
-    //         years like 2027/2029 where the day lands ~May 1)
-    //   71  → ±35 (current)
+    //   75   → legacy "month-01 + 75" approach (correct but slow)
+    //   41   → ±20 (too tight, missed Magha 2027)
+    //   51   → ±25 (too tight, missed Chaitra Krishna Dashami in late-
+    //               Ugadi years like 2027/2029)
+    //   71   → ±35 symmetric (still missed Adhika Vaisakha 2029)
+    //   86   → asymmetric -25/+60 (current)
     //
-    // The Metonic cycle drifts the actual masa start by up to ±18 days
-    // year-to-year. Combined with a masa span of ~30 days, a Tithi at
-    // either end of its masa needs ~35 days of slack to be reliably
-    // caught in every year of a 5-year search.
+    // The match condition below already excludes Adhika months
+    // (`!p.masa.isAdhika`), so the wider window can scan past an
+    // Adhika masa without producing a false positive — it keeps
+    // walking until it hits the regular masa.
+    //
+    // Performance: 86 days × 5 years × ~1 ms per panchangam call
+    // ≈ 430 ms uncached. Subsequent identical requests hit the
+    // anniversary-v2 KV cache and return in <1 ms.
     const midpoint = estimateMasaMidpoint(tithiIdentity.masaNumber, year);
-    const searchStart = addDays(midpoint, -35);
+    const searchStart = addDays(midpoint, -25);
 
     let found = false;
     let current = searchStart;
 
-    for (let i = 0; i < 71 && !found; i++) {
+    for (let i = 0; i < 86 && !found; i++) {
       try {
         const p = calculateDayPanchangam(current, location);
 

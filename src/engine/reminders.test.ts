@@ -76,6 +76,30 @@ describe("findTithiAnniversaries", () => {
     otherResults.forEach((r) => expect(r.isCurrentYear).toBe(false));
   });
 
+  it("finds all 5 years for an Adhika Vaisakha birth (1991-05-14)", () => {
+    // 1991-05-14 in Hyderabad falls in Adhika Vaisakha 1991. The
+    // anniversary scan must walk past Adhika Vaisakha 2029 (Apr 14 –
+    // May 13) and find the REGULAR Vaisakha 2029 (May 14 – June 12).
+    // Previously the symmetric ±35 window ended June 8 and missed
+    // June 12. Asymmetric -25/+60 window now catches it.
+    const ti = getTithiForDate("1991-05-14", hyderabad.lat, hyderabad.lng, hyderabad.tz);
+    expect(ti.masaNumber).toBe(2);
+
+    const results = findTithiAnniversaries(
+      ti, 2026, 2030,
+      hyderabad.lat, hyderabad.lng, hyderabad.tz,
+      "2026-04-07"
+    );
+
+    const years = results.map((r) => r.year);
+    expect(years).toContain(2026);
+    expect(years).toContain(2027);
+    expect(years).toContain(2028);
+    expect(years).toContain(2029); // ← previously missing
+    expect(years).toContain(2030);
+    expect(results.length).toBe(5);
+  });
+
   it("uses calendar-year semantics for Magha/Phalguna (masas 11/12)", () => {
     // 2026-02-15 falls in Magha (masa 11). When the user asks for
     // anniversaries starting at 2026, the engine should look at
