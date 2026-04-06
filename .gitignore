@@ -40,3 +40,8 @@ next-env.d.ts
 prompts.md
 CLAUDE.md
 skills.md
+
+# Playwright
+e2e/screenshots/*.png
+playwright-report/
+test-results/

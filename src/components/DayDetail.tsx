@@ -45,20 +45,26 @@ export default function DayDetail({ data }: DayDetailProps) {
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-fade-up">
       {/* HEADER — Date + Context */}
-      <header className="text-center space-y-2 relative">
-        <h1 className="font-playfair text-3xl text-text-primary">
-          {data.vara[lang]} &middot; {data.date}
-        </h1>
-        <button
-          onClick={() => {
-            navigator.clipboard.writeText(window.location.href);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-          }}
-          className="absolute right-0 top-0 text-text-secondary hover:text-accent text-sm font-lora transition-colors"
-        >
-          {copied ? "\u2713 Copied!" : "Share \uD83D\uDCCB"}
-        </button>
+      <header className="space-y-2">
+        <div className="flex items-start justify-between gap-2">
+          <h1 className="font-playfair text-2xl sm:text-3xl text-text-primary leading-tight flex-1 text-center sm:text-center">
+            {data.vara[lang]} &middot; {data.date}
+          </h1>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2000);
+            }}
+            className="flex-shrink-0 inline-flex items-center gap-1 text-text-secondary hover:text-accent text-sm font-lora transition-colors mt-1 no-print min-h-[44px] px-2"
+            aria-label="Share"
+          >
+            <span>{copied ? "\u2713" : "\uD83D\uDCCB"}</span>
+            <span className="hidden sm:inline text-xs">
+              {copied ? "Copied!" : "Share"}
+            </span>
+          </button>
+        </div>
         <div className="w-16 h-px bg-label/20 mx-auto" />
         <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-sm">
           <span className="font-noto-telugu text-text-secondary inline-flex items-center gap-0.5">

@@ -105,6 +105,15 @@ body {
   animation: tooltipFade 0.15s ease forwards;
 }
 
+/* Hide scrollbar but keep scrolling — used by AppHeader nav links */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* ===== Print styles ===== */
 @media print {
   header,

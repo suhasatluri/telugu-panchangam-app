@@ -11,6 +11,10 @@
     "test": "jest",
     "test:engine": "jest src/engine/",
     "test:validation": "jest validation/",
+    "test:e2e": "playwright test",
+    "test:e2e:mobile": "playwright test --project='Mobile Chrome (375px)' --project='Mobile Chrome (390px)'",
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:screenshots": "playwright test --grep='Screenshots'",
     "pages:build": "npx @cloudflare/next-on-pages",
     "pages:preview": "npm run pages:build && npx wrangler pages dev .vercel/output/static",
     "pages:deploy": "npm run pages:build && npx wrangler pages deploy .vercel/output/static",
@@ -30,6 +34,7 @@
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.13.16",
+    "@playwright/test": "^1.59.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^18",
