@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { hasCity, setCity } from "@/lib/cache";
 import type { CityInfo } from "@/lib/cache";
+import { isNonIndianTimezone } from "@/engine/timezone";
 
 interface GeocodeResult {
   displayName: string;
@@ -199,9 +200,14 @@ export default function CityWelcome({ isChanging, onDismiss }: CityWelcomeProps)
               <span>&#x1F4CD;</span>
               <span className="font-lora">{selectedCity.name}</span>
             </div>
-            <p className="font-lora text-text-secondary text-sm mb-6">
+            <p className="font-lora text-text-secondary text-sm mb-2">
               Showing Panchangam for <strong>{selectedCity.name}</strong>
             </p>
+            {isNonIndianTimezone(selectedCity.tz) && (
+              <p className="text-xs font-lora text-text-secondary italic mt-2 mb-6">
+                &#x1F30D; Timings will be shown for {selectedCity.name}. Festival dates may differ by one day from Indian printed calendars.
+              </p>
+            )}
             <button
               onClick={confirm}
               className="w-full py-3 rounded-lg bg-header-grad text-white font-lora text-sm font-semibold hover:opacity-90 transition-opacity"

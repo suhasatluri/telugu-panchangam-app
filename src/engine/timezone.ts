@@ -63,3 +63,31 @@ export function formatWithTz(date: Date, tz: string): string {
 
   return `${y}-${mo}-${d}T${h}:${mi}:${s}${sign}${offsetHours}:${offsetMins}`;
 }
+
+/**
+ * Returns true if the IANA timezone is NOT in India.
+ * Used to decide whether to show date disclaimers for users
+ * whose Tithi transitions may fall on a different Gregorian
+ * date than printed Indian Panchangams.
+ */
+export function isNonIndianTimezone(tz: string): boolean {
+  return !tz.startsWith("Asia/Kolkata") && !tz.startsWith("Asia/Calcutta");
+}
+
+/**
+ * Returns a friendly offset description like "GMT+11" for the
+ * given IANA timezone, computed at the current moment.
+ */
+export function getOffsetDescription(tz: string): string {
+  try {
+    const formatter = new Intl.DateTimeFormat("en", {
+      timeZone: tz,
+      timeZoneName: "shortOffset",
+    });
+    const parts = formatter.formatToParts(new Date());
+    const offsetPart = parts.find((p) => p.type === "timeZoneName");
+    return offsetPart?.value ?? tz;
+  } catch {
+    return tz;
+  }
+}

@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getLang } from "@/lib/cache";
+import { getCity, getLang } from "@/lib/cache";
+import LocationDisclaimer from "./LocationDisclaimer";
+import type { CityInfo } from "@/lib/cache";
 import { UI } from "@/lib/i18n";
 import MoonPhase from "./MoonPhase";
 import Tooltip from "./Tooltip";
@@ -28,9 +30,11 @@ function formatTimeRange(start: string, end: string): string {
 export default function DayDetail({ data }: DayDetailProps) {
   const [lang, setLang] = useState<Lang>("en");
   const [copied, setCopied] = useState(false);
+  const [city, setCityState] = useState<CityInfo | null>(null);
 
   useEffect(() => {
     setLang(getLang());
+    setCityState(getCity());
   }, []);
 
   const l = (key: string) => UI[key]?.[lang] ?? key;
@@ -77,6 +81,15 @@ export default function DayDetail({ data }: DayDetailProps) {
           </span>
         </div>
       </header>
+
+      {city && (
+        <LocationDisclaimer
+          cityName={city.name}
+          tz={city.tz}
+          lang={lang}
+          variant="day"
+        />
+      )}
 
       {/* PANCHA ANGA — 5 cards */}
       <section>

@@ -6,6 +6,7 @@ import type { Lang } from "@/lib/i18n";
 import type { Festival } from "@/engine/types";
 import LoadingState from "./LoadingState";
 import ErrorState from "./ErrorState";
+import LocationDisclaimer from "./LocationDisclaimer";
 
 type Filter = "all" | "tier1" | "regional" | "ekadashi" | "amavasya";
 
@@ -98,6 +99,7 @@ export default function FestivalTracker() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>("all");
   const [cityName, setCityName] = useState("Melbourne");
+  const [cityTz, setCityTz] = useState("Australia/Melbourne");
   const nextRef = useRef<HTMLDivElement>(null);
 
   const today = todayStr();
@@ -107,6 +109,7 @@ export default function FestivalTracker() {
     setFetchError(null);
     const city = getCity();
     setCityName(city.name);
+    setCityTz(city.tz);
     try {
       const res = await fetch(
         `/api/festivals?year=${y}&lat=${city.lat}&lng=${city.lng}&tz=${encodeURIComponent(city.tz)}`
@@ -207,6 +210,15 @@ export default function FestivalTracker() {
           </p>
         </div>
       )}
+
+      <div className="mb-4">
+        <LocationDisclaimer
+          cityName={cityName}
+          tz={cityTz}
+          lang={lang}
+          variant="festival"
+        />
+      </div>
 
       {/* Filter pills */}
       <div className="flex flex-wrap justify-center gap-2 mb-6">

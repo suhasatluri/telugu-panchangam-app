@@ -44,8 +44,8 @@ export const TOOLTIPS: Record<string, { en: string; te: string }> = {
     te: "పక్షం — శుక్ల పక్షం (వెలుతురు పక్షం) లేదా కృష్ణ పక్షం (చీకటి పక్షం).",
   },
   sunrise: {
-    en: "Local sunrise time for your city — the Panchangam day begins at sunrise, not midnight.",
-    te: "మీ నగరంలో సూర్యోదయ సమయం — పంచాంగ రోజు సూర్యోదయంతో మొదలవుతుంది, అర్ధరాత్రి కాదు.",
+    en: "Local sunrise time for your city — the Panchangam day begins at sunrise, not midnight. This is why dates may differ from printed Indian calendars.",
+    te: "మీ నగరంలో సూర్యోదయ సమయం — పంచాంగ రోజు సూర్యోదయంతో మొదలవుతుంది. అందుకే భారత పంచాంగాలలో తేదీలు వేరుగా ఉండవచ్చు.",
   },
   moonPhase: {
     en: "The Moon's current illumination — from new moon (Amavasya) to full moon (Purnima) and back.",

@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getLang } from "@/lib/cache";
+import { getCity, getLang } from "@/lib/cache";
+import type { CityInfo } from "@/lib/cache";
 import { getWeekdayHeaders } from "@/lib/i18n";
 import Tooltip from "./Tooltip";
+import LocationDisclaimer from "./LocationDisclaimer";
 import { TOOLTIPS } from "@/lib/tooltips";
 import type { Lang } from "@/lib/i18n";
 
@@ -33,9 +35,11 @@ export default function CalendarGrid({
   days,
 }: CalendarGridProps) {
   const [lang, setLang] = useState<Lang>("en");
+  const [city, setCityState] = useState<CityInfo | null>(null);
 
   useEffect(() => {
     setLang(getLang());
+    setCityState(getCity());
   }, []);
 
   const headers = getWeekdayHeaders(lang);
@@ -49,6 +53,17 @@ export default function CalendarGrid({
 
   return (
     <div className="w-full">
+      {city && (
+        <div className="mb-3">
+          <LocationDisclaimer
+            cityName={city.name}
+            tz={city.tz}
+            lang={lang}
+            variant="day"
+          />
+        </div>
+      )}
+
       {/* Weekday headers */}
       <div className="grid grid-cols-7 gap-px mb-1">
         {headers.map((h, i) => (
