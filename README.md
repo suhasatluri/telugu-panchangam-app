@@ -40,8 +40,16 @@ No ads. No login. No subscriptions. Free forever.
 | 🎉 Festival Tracker | ✅ Live | 40+ Telugu festivals for any year — Ugadi, Sankranti, Deepavali and more |
 | 🕐 Muhurtam Finder | ✅ Live | Auspicious windows within any date range, excluding Rahukalam |
 | ⭐ Nakshatra Finder | ✅ Live | Janma Nakshatra + Raasi + Tarabalam from birth date, time, city |
-| 📱 PWA | 🔲 Coming | Installable on Android and iPhone, works offline |
+| 💡 Tooltips | ✅ Live | Tap any Panchanga element for a bilingual explanation |
+| 🏠 City Welcome | ✅ Live | Guided city selection for first-time visitors |
+| 🛡️ Error Handling | ✅ Live | Graceful error and loading states across all pages |
+| 📱 PWA | ✅ Live | Installable on Android and iPhone, works offline |
 | 🔌 Public API | ✅ Live | Free, no key required — 7 endpoints, embed in your website |
+| 🖨️ Print Calendar | ✅ Live | Clean Venkatrama-style month print, fits A4/Letter |
+| ⌨️ Keyboard Shortcuts | ✅ Live | ←/→ navigation, T M D F U N R S P ? |
+| 🌍 Location Disclaimer | ✅ Live | Explains timezone-driven date differences for non-Indian cities |
+| ✨ Significant Ekadashis | ✅ Live | Vaikunta, Nirjala, Devshayani, Prabodhini highlighted with bilingual significance |
+| 📲 Social OG Images | ✅ Live | WhatsApp/Twitter previews, dynamic per-day cards |
 
 ---
 

@@ -6,7 +6,62 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [Unreleased]
+## [1.0.0] — 2026-04-06: Public launch
+
+### Added
+- LocationDisclaimer component — soft informational banner explaining that Tithi
+  transitions may fall on different Gregorian dates than printed Indian Panchangams
+  for users in non-Indian timezones; shown on day, month, festival pages and
+  CityWelcome confirmation
+- isNonIndianTimezone() and getOffsetDescription() helpers in engine/timezone.ts
+- PrintableCalendar component + @media print styles — Venkatrama-style A4/Letter
+  month print with Telugu Tithis, moon phases, festival names, city footer
+- Print button on month view (🖨️ ముద్రించు)
+- Full bilingual support on the reminder form: REMINDERS and TITHI_ANNIV i18n
+  namespaces; AncestorReminder and TithiAnniversary use i18n for every label,
+  placeholder, option, button and status message
+- RemindersHeader client component for bilingual page title and intro
+- Static OG image (1200×630, Lotus Dawn, Telugu script, feature pills)
+- Dynamic OG images for day and month pages via next/og (edge runtime)
+- Full OpenGraph + Twitter card metadata in root layout (locale, alternateLocale,
+  siteName, robots, icons, metadataBase)
+- generateMetadata for day pages — split into server page.tsx + DayPageClient
+- useKeyboardShortcuts hook — ←/→ navigation, T M D F U N R S P ? shortcuts;
+  disabled when typing in form fields and when a modal is open (except Escape)
+- KeyboardShortcutsHelp bilingual modal with two-column key badges
+- Toast component for share confirmation
+- Subtle desktop-only ⌨️ hint button in NavBar
+- Significant Ekadashi distinction: Vaikunta (Mukkoti), Nirjala, Devshayani,
+  Prabodhini — bilingual significance text, gold styling on calendar grid,
+  festival tracker and day detail
+- significantEkadashis.ts shared module (avoids festivals/festivalMatcher cycle)
+- Festival type: isSignificantEkadashi and significance fields
+- 6 new engine tests for significant Ekadashis (107 tests total)
+- PWA app icons: icon.svg master, real PNG icon-192/512, apple-icon-180,
+  favicon-32 and favicon.ico generated with sharp
+- manifest.json: full icon set with maskable purpose, screenshots, PWA shortcuts
+  (Today / Festivals / Reminders)
+- Tooltips on Pancha Anga cards — tap/hover any element for a bilingual explanation
+- "What is Panchangam?" LearnModal — accessible from header, explains all 5 elements
+- CityWelcome full-screen prompt — guides first-time visitors to select their city
+- ErrorState and LoadingState reusable components — consistent UI for all async states
+- Custom error page (error.tsx) and 404 page (not-found.tsx)
+- src/lib/tooltips.ts — centralised tooltip content for all Panchanga elements
+
+### Changed
+- Regular Ekadashis demoted from tier 1 to tier 2; the four sacred Ekadashis
+  promoted to tier 1 with custom names
+- Sunrise tooltip mentions timezone-driven date differences
+- Day page is now a server component with generateMetadata; client logic moved
+  to DayPageClient
+
+### Fixed
+- Graceful error and loading states across all pages — no more raw error messages
+- City selection prompt appears on first visit instead of defaulting silently
+- Reminder form is fully bilingual — Telugu users can complete the form without
+  reading a single English word
+- PWA install icons are now real PNGs (not SVG-as-PNG placeholders), so Android
+  and iOS Safari render the home-screen icon correctly
 
 ---
 

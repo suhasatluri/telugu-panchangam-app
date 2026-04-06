@@ -110,6 +110,8 @@ telugu-panchangam-app/
 │   ├── app/                     ← Next.js App Router
 │   │   ├── page.tsx             ← Home — today's Panchangam
 │   │   ├── layout.tsx
+│   │   ├── error.tsx            ← Error boundary page
+│   │   ├── not-found.tsx        ← Custom 404 page
 │   │   ├── [year]/
 │   │   │   └── [month]/
 │   │   │       ├── page.tsx     ← Month grid view
@@ -164,6 +166,7 @@ telugu-panchangam-app/
 │   │   ├── DayDetail.tsx
 │   │   ├── MoonPhase.tsx        ← SVG animated moon
 │   │   ├── CitySearch.tsx
+│   │   ├── CityWelcome.tsx       ← First-visit city selector (full-screen)
 │   │   ├── LanguageToggle.tsx
 │   │   ├── TimeNav.tsx
 │   │   ├── NavBar.tsx            ← Persistent navigation bar
@@ -173,6 +176,10 @@ telugu-panchangam-app/
 │   │   ├── FestivalTracker.tsx   ← పండుగలు — Festival list + filters
 │   │   ├── MuhurtamFinder.tsx    ← ముహూర్తం — Auspicious window finder
 │   │   ├── NakshatraFinder.tsx   ← జన్మ నక్షత్రం — Birth star finder
+│   │   ├── Tooltip.tsx           ← Hover/tap tooltip for Panchanga elements
+│   │   ├── LearnModal.tsx        ← "What is Panchangam?" bilingual modal
+│   │   ├── ErrorState.tsx        ← Reusable error display with retry
+│   │   ├── LoadingState.tsx      ← Reusable loading skeleton
 │   │   └── ServiceWorkerRegistration.tsx ← PWA service worker loader
 │   ├── data/
 │   │   ├── samvatsaram.json     ← 60 year names TE + EN
@@ -185,7 +192,8 @@ telugu-panchangam-app/
 │   │   ├── i18n.ts              ← All UI strings TE + EN
 │   │   ├── cache.ts             ← localStorage helpers (city, lang)
 │   │   ├── emailTemplates.ts    ← Bilingual HTML email templates
-│   │   └── cloudflare.ts        ← getDB(), getKV(), getEnvVar() helpers
+│   │   ├── cloudflare.ts        ← getDB(), getKV(), getEnvVar() helpers
+│   │   └── tooltips.ts          ← Tooltip content for all Panchanga elements
 │   ├── hooks/
 │   │   └── usePanchangam.ts
 │   └── types/                   ← (empty — types live in engine/types.ts)
@@ -339,6 +347,8 @@ Phase 2.5 — Ancestor Reminders: [x] Complete (పితృ స్మరణ wit
 Phase 3 — Festivals + Muhurtam: [x] Complete (festival engine, muhurtam finder, calendar badges, API routes)
 Phase 4 — Nakshatra + Moon:     [x] Complete (Janma Nakshatra finder, Tarabalam, Raasi, MoonPhase glow)
 Phase 5 — PWA + Deploy:         [x] Complete (PWA manifest, service worker, Cloudflare Pages live)
+Phase 5.1 — UX Polish:          [x] Complete (tooltips, city welcome, error/loading states, learn modal)
+Phase 6 — v1.0.0 Launch:        [x] Complete (location disclaimer, print calendar, bilingual reminder form, OG images, keyboard shortcuts, significant Ekadashis, real PNG PWA icons)
 ```
 
 Update this section after each phase completes.
