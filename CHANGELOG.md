@@ -61,6 +61,42 @@ follow-ups to the mobile hotfix discovered while iterating on CI.
   `getByTestId("city-welcome")`. Bonus: the keyboard-shortcuts hook
   now correctly disables shortcuts while CityWelcome is showing
   (commit `0f61d24`).
+- **Anniversary calendar-year semantics** for masas 11/12 (Magha and
+  Phalguna). The legacy `estimateMasaStart` used samvatsaram-relative
+  year semantics: a Magha-born user asking for "2026" got Jan 2027
+  (Parabhava's Magha) instead of Jan 2026 (Krodhi's Magha). Dropped
+  `nextYear: true` from `MASA_MIDPOINT`. The `year` argument now
+  consistently means the Gregorian calendar year and the samvatsaram
+  label correctly reflects whichever samvatsaram contains that
+  Gregorian date. New regression test in `reminders.test.ts`
+  (commit `a4af8d1`).
+- **Anniversary scan window widened** from 41 → 51 days (±25 from
+  midpoint). The Metonic cycle drifts the actual masa start by up to
+  ±15 days year-to-year and the tighter window missed late-edge years
+  (Magha 2027 ends Feb 26, outside a window ending Feb 18). 108 tests
+  pass with the new window (commit `a4af8d1`).
+- **TeluguBirthday + TithiAnniversary three-state `daysFromNow`
+  styling.** Both finders previously only styled future + zero
+  states; past dates from the current year fell through to nothing.
+  Now: `=== 0` → 🎂/🪔 gold "Today" badge, `> 0` → "in N days" in
+  auspicious green, `< 0` → "N days ago" in muted italic. Past
+  birthdays/anniversaries from the current calendar year are still
+  shown — they're still legitimate entries for that year, just
+  already happened (commits `a4af8d1`, `3f6e78f`).
+- **Geocode now returns cities, not addresses.** OpenCage was returning
+  street addresses, neighbourhoods and POIs ("Banjara Hills,
+  Hyderabad", "12 Main Road, Hyderabad"). The route now filters
+  results to city-level `_type` values (`city`, `town`, `village`,
+  `municipality`, `county`, `state_district`), rebuilds the display
+  name from `components` as "City, State, Country" instead of using
+  `r.formatted`, deduplicates, and asks OpenCage for `min_confidence=3`
+  to trim noise server-side. Falls back to all results if no city
+  match (commit `3f6e78f`).
+- **Anniversary KV cache key bumped to `anniversary-v2:`** to
+  invalidate entries computed with the buggy samvatsaram-relative
+  semantics and the narrower 41-day window. Without an algorithm
+  version in the key those entries would persist for 24h and serve
+  stale data (commit `3f6e78f`).
 - `next.config.mjs`: skip `setupDevPlatform` when `process.env.CI` is set
   and wrap the import in `try/catch`. Stops Playwright e2e from crashing
   in CI with `Cannot find module 'wrangler'` (commit `6efaa1f`).
