@@ -26,13 +26,35 @@ Documentation PRs are always welcome. If anything in `ARCHITECTURE.md`, `ALGORIT
 ### 🌆 Add a City
 If your city is missing from the geocoding suggestions, open an issue. We will add it to the pre-loaded city list.
 
+### ✨ Other Areas Added in v1.1.0
+The following surfaces were added after the initial launch and are open
+for contributions:
+
+- **Significant Ekadashis** — `src/engine/significantEkadashis.ts`. Add or
+  refine bilingual `significance` text, or extend the list with other
+  regionally important Ekadashis (currently: Vaikunta, Nirjala, Devshayani,
+  Prabodhini).
+- **Keyboard shortcuts** — `src/hooks/useKeyboardShortcuts.ts` and
+  `src/components/KeyboardShortcutsHelp.tsx`. Suggest new shortcuts via an
+  issue first so we can keep the set small and conflict-free.
+- **Location disclaimer copy** — `src/components/LocationDisclaimer.tsx`.
+  Translation improvements welcome.
+- **Bilingual reminder form** — strings live in `REMINDERS` and
+  `TITHI_ANNIV` namespaces in `src/lib/i18n.ts`. PRs improving Telugu
+  phrasing here are particularly valuable.
+- **Print stylesheet** — `@media print` block in `src/app/globals.css`
+  and `src/components/PrintableCalendar.tsx`. Test prints from real
+  printers and report layout issues.
+- **OG / social share images** — static `public/og-image.svg` and
+  dynamic `src/app/[year]/[month]/{,[day]/}opengraph-image.tsx`.
+
 ---
 
 ## Development Setup
 
 ### Prerequisites
 
-- Node.js 18.x or later
+- Node.js 20.x (CI) or 24.x (local development)
 - npm 9.x or later
 - A Cloudflare account (free) for deployment testing
 - Git
@@ -58,7 +80,7 @@ cp .env.example .env.local
 npm run dev
 # App runs at http://localhost:3000
 
-# 6. Run tests
+# 6. Run tests (107 tests, ~50s)
 npm test
 ```
 
@@ -97,7 +119,7 @@ docs/          ← Documentation (ALGORITHM.md is especially important)
 
 2. **Write or update tests** for your change. PRs without tests for engine changes will not be merged.
 
-3. **Run the full test suite** before submitting:
+3. **Run the full test suite** before submitting (all 107 tests must pass):
    ```bash
    npm test
    npm run typecheck
@@ -128,6 +150,37 @@ Festival accuracy is the most important form of contribution. If you believe a f
    - Your reference source (Venkatrama, Eenadu, another trusted Panchangam)
    - The city/timezone relevant to your observation
 3. If you can confirm the Venkatrama calendar agrees with your correction, mention this — it is the fastest path to a fix
+
+---
+
+## Translation Glossary
+
+All UI strings live in `src/lib/i18n.ts`. They are organised into three
+groups — please follow the same structure when adding new strings.
+
+| Where | Used by | Notes |
+|---|---|---|
+| `UI` (flat record) | App-wide labels (Pancha Anga, sky timings, navigation) | Read with `t("key", lang)` or `UI.key[lang]` |
+| `REMINDERS` namespace | The పితృ స్మరణ form (`AncestorReminder.tsx`) | Form labels, options, success/error states |
+| `TITHI_ANNIV` namespace | The తిథి వార్షికం finder (`TithiAnniversary.tsx`) | Form, results, inline + annual reminder UIs |
+
+**Conventions for Telugu translators:**
+
+- Use **Andhra Pradesh / Telangana** spellings — this is our primary
+  audience. We follow Venkatrama & Co. (Eluru) for traditional terms.
+- Telugu numerals are NOT used — keep Arabic numerals (1, 2, 3) for
+  dates, times, and counts so the UI stays consistent across languages.
+- Diacritics matter — please double-check vowel marks (గుణింతాలు)
+  before submitting.
+- Tooltip content lives separately in `src/lib/tooltips.ts` — same
+  bilingual structure, same conventions.
+- Festival names live in `src/engine/festivals.ts`,
+  `src/engine/festivalMatcher.ts` and (for the four sacred Ekadashis)
+  `src/engine/significantEkadashis.ts`. Keep the names in all three
+  in sync if you're correcting a name.
+
+If you are uncertain about a phrasing choice, open an issue first so
+we can discuss before you spend time on a PR.
 
 ---
 
