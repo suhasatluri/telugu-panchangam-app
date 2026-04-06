@@ -6,6 +6,43 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [Unreleased]
+
+These fixes ship between v1.1.1 and the next tagged release. They are
+follow-ups to the mobile hotfix discovered while iterating on CI.
+
+### Fixed
+- `next.config.mjs`: skip `setupDevPlatform` when `process.env.CI` is set
+  and wrap the import in `try/catch`. Stops Playwright e2e from crashing
+  in CI with `Cannot find module 'wrangler'` (commit `6efaa1f`).
+- `playwright.config.ts`: dropped `devices['iPhone …']` / `iPad Mini`
+  spreads — they silently switched the engine to webkit. All five
+  viewports now share a `mobileChromium` base built from
+  `devices['Desktop Chrome']` so CI only needs `playwright install
+  chromium` (commit `03446ca`).
+- `e2e/mobile.spec.ts` city-welcome locator: replaced the invalid mixed
+  CSS / `text=` selector with `.or()` chaining over `getByRole` /
+  `getByText` (commit `03446ca`).
+- LanguageToggle and CitySearch: bumped to `py-2 min-h-[44px]`. The
+  Telugu glyph "తె" pushes the rendered height of `py-1.5` buttons to
+  ~38.5 px, below the 44 px accessibility target. NavBar Month/Day
+  tabs bumped to `py-2 min-h-[40px]` (commit `57a6938`).
+- AngaCard now exposes `data-testid="anga-card"`. The Pancha Anga
+  layout test uses `cards.nth(0)` / `cards.nth(1)` instead of the
+  fragile `:has-text("TITHI")` selector that was matching parent
+  containers and reporting a false 102 px row gap (commit `57a6938`).
+
+### Docs
+- CHANGELOG split into accurate `[1.0.0]`, `[1.1.0]`, `[1.1.1]` sections
+  matching the actual git tags (commit `79307bf`).
+- ARCHITECTURE.md: new "Testing" section covering Jest unit/regression
+  and Playwright e2e layers, including the CI guard and viewport list
+  (commit `79307bf`).
+- CONTRIBUTING.md: new "Running Mobile E2E Tests (Playwright)"
+  subsection (commit `79307bf`).
+
+---
+
 ## [1.1.1] — 2026-04-06: Mobile hotfix
 
 ### Fixed
