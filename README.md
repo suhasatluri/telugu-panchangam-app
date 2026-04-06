@@ -124,7 +124,28 @@ If you find a discrepancy between this app and your trusted local Panchangam, pl
 
 ## Contributing
 
-Contributions are welcome from developers, traditional scholars, Telugu speakers, and community members. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Contributions are welcome from developers, traditional scholars, Telugu speakers, and community members. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community standards.
+
+### Your first contribution in 5 minutes
+
+The easiest entry points if you've never contributed before:
+
+1. **Spotted a wrong festival date?** Open a [Festival Correction issue](https://github.com/suhasatluri/telugu-panchangam-app/issues/new?template=festival_correction.yml) — no code needed. If your correction matches Venkatrama & Co., it gets fixed fast.
+2. **Improving a Telugu translation?** All UI strings live in [`src/lib/i18n.ts`](src/lib/i18n.ts). Edit the `te:` value next to any string and open a PR.
+3. **Adding a city?** If your city is missing from the geocoding suggestions, open a [Bug issue](https://github.com/suhasatluri/telugu-panchangam-app/issues/new?template=bug_report.yml) and we'll add it.
+4. **Fixing a bug or adding a feature?** Browse the [`good first issue`](https://github.com/suhasatluri/telugu-panchangam-app/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) label, fork the repo, and follow the [Development Setup](CONTRIBUTING.md#development-setup) section.
+
+### Roadmap
+
+The high-level direction is tracked in [CHANGELOG.md](CHANGELOG.md) under `[Unreleased]`. Big themes for the next phase:
+
+- More Telugu festivals (regional / temple-specific) and family Vratam reminders
+- Multi-language reminder emails (Tamil, Kannada, Hindi)
+- Offline-first PWA with full year pre-cached
+- An iOS / Android wrapper for app stores
+- A "Family Calendar" mode that aggregates multiple users' Tithi anniversaries
+
+If any of these excite you, comment on the relevant CHANGELOG line or open a Discussion.
 
 ---
 

@@ -92,8 +92,11 @@ The Venkatrama calendar images in `validation/venkatrama/` are our ground truth:
 # Run all validation tests
 npm test -- validation/regression.test.ts
 
-# Run a specific date
-npm run validate -- --date=2026-03-19
+# Run only the engine module tests
+npm run test:engine
+
+# Run only the Venkatrama regression assertions
+npm run test:validation
 ```
 
 ### Running Mobile E2E Tests (Playwright)
