@@ -5,6 +5,7 @@ import { getCity, getLang } from "@/lib/cache";
 import type { CityInfo } from "@/lib/cache";
 import { TITHI_ANNIV } from "@/lib/i18n";
 import type { Lang } from "@/lib/i18n";
+import CitySearchInline from "./CitySearchInline";
 
 interface TithiIdentity {
   masaNumber: number;
@@ -39,6 +40,7 @@ type ViewState = "form" | "loading" | "results";
 export default function TithiAnniversary() {
   const [viewState, setViewState] = useState<ViewState>("form");
   const [city, setCity] = useState<CityInfo | null>(null);
+  const [editingCurrentCity, setEditingCurrentCity] = useState(false);
   const [lang, setLangState] = useState<Lang>("en");
 
   // Form state
@@ -224,13 +226,41 @@ export default function TithiAnniversary() {
             {originSearching && <div className={`text-[10px] text-label mt-1 ${teClass}`}>{TITHI_ANNIV.searching[lang]}</div>}
           </div>
 
-          {/* Current city */}
+          {/* Current city — editable override */}
           {city && (
             <div>
               <label className={`block text-xs text-label mb-1 ${teClass}`}>{TITHI_ANNIV.currentCityLabel[lang]}</label>
-              <div className="px-3 py-2 rounded-md border border-label/10 bg-label/5 text-text-secondary text-sm font-lora">
-                &#x1F4CD; {city.name} ({city.tz})
-              </div>
+              {!editingCurrentCity ? (
+                <div className="flex items-center justify-between gap-2 px-3 py-2 rounded-md border border-accent/20 bg-cream">
+                  <span className="font-lora text-text-secondary text-sm truncate">
+                    &#x1F4CD; {city.name}
+                    <span className="text-label/60 text-xs ml-1">({city.tz})</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setEditingCurrentCity(true)}
+                    className={`text-xs text-accent hover:underline flex-shrink-0 ${teClass}`}
+                  >
+                    {TITHI_ANNIV.changeCity[lang]}
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <CitySearchInline
+                    placeholder={TITHI_ANNIV.searchCityPlaceholder[lang]}
+                    cancelLabel={TITHI_ANNIV.cancel[lang]}
+                    searchingLabel={TITHI_ANNIV.searching[lang]}
+                    onSelect={(picked) => {
+                      setCity(picked);
+                      setEditingCurrentCity(false);
+                    }}
+                    onCancel={() => setEditingCurrentCity(false)}
+                  />
+                  <p className={`text-[10px] text-label/70 italic mt-1 ${teClass}`}>
+                    {TITHI_ANNIV.cityOverrideNote[lang]}
+                  </p>
+                </>
+              )}
               <div className={`text-[10px] text-label mt-0.5 ${teClass}`}>{TITHI_ANNIV.currentCityHint[lang]}</div>
             </div>
           )}

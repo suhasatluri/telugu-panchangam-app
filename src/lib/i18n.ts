@@ -258,6 +258,12 @@ export const TITHI_ANNIV: Record<string, I18nString> = {
   setting: { te: "సెట్ చేస్తోంది...", en: "Setting..." },
   setAnnual: { te: "వార్షిక రిమైండర్ సెట్ చేయండి", en: "Set Annual Reminder" },
   oncePerYear: { te: "మీరు సంవత్సరానికి ఒక రిమైండర్ అందుకుంటారు", en: "You will receive one reminder per year" },
+  changeCity: { te: "మార్చండి", en: "Change" },
+  cityOverrideNote: {
+    te: "ఇది కేవలం ఈ లెక్కకు మాత్రమే. మీ యాప్ నగరం మారదు.",
+    en: "This only affects this calculation — your app city is unchanged.",
+  },
+  searchCityPlaceholder: { te: "నగరం వెతకండి...", en: "Search for a city..." },
 };
 
 /** Telugu Birthday (జన్మ తిథి) finder strings */
