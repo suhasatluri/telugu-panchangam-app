@@ -259,3 +259,36 @@ export const TITHI_ANNIV: Record<string, I18nString> = {
   setAnnual: { te: "వార్షిక రిమైండర్ సెట్ చేయండి", en: "Set Annual Reminder" },
   oncePerYear: { te: "మీరు సంవత్సరానికి ఒక రిమైండర్ అందుకుంటారు", en: "You will receive one reminder per year" },
 };
+
+/** Telugu Birthday (జన్మ తిథి) finder strings */
+export const TELUGU_BIRTHDAY: Record<string, I18nString> = {
+  tabTitle: { te: "తెలుగు పుట్టినరోజు", en: "Telugu Birthday" },
+  pageTitle: { te: "జన్మ తిథి", en: "Telugu Birthday Finder" },
+  subtitle: {
+    te: "తెలుగు క్యాలెండర్ ప్రకారం మీ పుట్టినరోజు కనుగొనండి",
+    en: "Find your birthday as per the Telugu calendar",
+  },
+  intro: {
+    te: "1 మే 1989 న జన్మించిన వ్యక్తికి ఒక నిర్దిష్ట తిథి ఉంటుంది. ఆ తిథి ప్రతి సంవత్సరం వేరే తేదీన వస్తుంది — అదే మీ నిజమైన తెలుగు పుట్టినరోజు.",
+    en: "A person born on 1 May 1989 was born on a specific Tithi. That Tithi falls on a different Gregorian date each year — that is your real Telugu birthday.",
+  },
+  dobLabel: { te: "పుట్టిన తేదీ", en: "Date of birth" },
+  dobHint: { te: "మీరు జన్మించిన తేదీ", en: "The date you were born" },
+  birthCityLabel: { te: "పుట్టిన నగరం", en: "City of birth" },
+  birthCityHint: {
+    te: "ఆ సమయంలో ఉన్న నగరం (ఖచ్చితమైన తిథి లెక్కించడానికి)",
+    en: "Used to calculate the precise Tithi at that location",
+  },
+  findButton: { te: "జన్మ తిథి కనుగొనండి", en: "Find My Birthday" },
+  resultsTitle: { te: "మీ తెలుగు పుట్టినరోజు ప్రతి సంవత్సరం", en: "Your Telugu birthday each year" },
+  bornOn: { te: "మీరు జన్మించిన తిథి", en: "You were born on" },
+  thisYear: { te: "ఈ సంవత్సరం", en: "THIS YEAR" },
+  shareBtn: { te: "పుట్టినరోజు షేర్ చేయండి", en: "Share my Telugu birthday" },
+  shareCopied: { te: "✓ కాపీ అయింది!", en: "✓ Copied!" },
+  setReminder: { te: "పుట్టినరోజు రిమైండర్", en: "Set Birthday Reminder" },
+  reminderNote: { te: "నా తెలుగు పుట్టినరోజు", en: "My Telugu birthday" },
+  disclaimer: {
+    te: "ఇది సూర్యోదయ సమయంలో చంద్రుని స్థానం ఆధారంగా లెక్కించబడుతుంది. ఖచ్చితత్వం పుట్టిన నగరం మరియు తేదీపై ఆధారపడి ఉంటుంది.",
+    en: "Calculated from the Moon's position at sunrise on your birth date. Accuracy depends on birth city and date.",
+  },
+};

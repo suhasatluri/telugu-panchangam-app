@@ -3,12 +3,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { getCity, getLang } from "@/lib/cache";
 import type { CityInfo } from "@/lib/cache";
-import { REMINDERS, TITHI_ANNIV } from "@/lib/i18n";
+import { REMINDERS, TITHI_ANNIV, TELUGU_BIRTHDAY } from "@/lib/i18n";
 import type { Lang } from "@/lib/i18n";
 import TithiAnniversary from "./TithiAnniversary";
+import TeluguBirthday from "./TeluguBirthday";
 import ErrorState from "./ErrorState";
 
-type Tab = "monthly" | "anniversary";
+type Tab = "monthly" | "anniversary" | "birthday";
 
 interface AmavasyaInfo {
   date: string;
@@ -163,9 +164,21 @@ export default function AncestorReminder() {
         >
           &#x1F64F; <span className={lang === "te" ? "font-noto-telugu" : ""}>{TITHI_ANNIV.tabTitle[lang]}</span>
         </button>
+        <button
+          onClick={() => setActiveTab("birthday")}
+          className={`px-4 py-2 rounded-md text-sm transition-all ${
+            activeTab === "birthday"
+              ? "bg-accent text-white font-semibold"
+              : "bg-transparent text-text-secondary hover:bg-label/10"
+          }`}
+        >
+          &#x1F382; <span className={lang === "te" ? "font-noto-telugu" : ""}>{TELUGU_BIRTHDAY.tabTitle[lang]}</span>
+        </button>
       </div>
 
-      {activeTab === "anniversary" ? (
+      {activeTab === "birthday" ? (
+        <TeluguBirthday />
+      ) : activeTab === "anniversary" ? (
         <TithiAnniversary />
       ) : (
       <div className="space-y-8">

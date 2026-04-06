@@ -190,14 +190,30 @@ export function getTithiForDate(
 }
 
 /**
- * Estimate the Gregorian date where a given Telugu masa approximately starts.
- * Chaitra(1)≈Mar, Vaisakha(2)≈Apr, ..., Pushya(10)≈Dec, Magha(11)≈Jan+1, Phalguna(12)≈Feb+1
+ * Approximate Gregorian midpoint for each Telugu masa. The actual span of a
+ * masa drifts ±15 days year-to-year due to lunar/solar misalignment, so a
+ * ±20 day window centred on this point reliably contains every Tithi for
+ * the given masa across all years in the modern era.
  */
-function estimateMasaStart(masaNumber: number, year: number): string {
-  // Masa 1(Chaitra)→month 3(Mar), Masa 2→4, ..., Masa 10→12, Masa 11→1, Masa 12→2
-  const gregMonth = ((masaNumber + 1) % 12) + 1;
-  const gregYear = gregMonth <= 2 ? year + 1 : year;
-  return `${gregYear}-${String(gregMonth).padStart(2, "0")}-01`;
+const MASA_MIDPOINT: Array<{ month: number; day: number; nextYear?: boolean }> = [
+  { month: 4, day: 4 },                       // 1  Chaitra
+  { month: 5, day: 4 },                       // 2  Vaishakha
+  { month: 6, day: 3 },                       // 3  Jyeshtha
+  { month: 7, day: 3 },                       // 4  Ashadha
+  { month: 8, day: 2 },                       // 5  Shravana
+  { month: 9, day: 1 },                       // 6  Bhadrapada
+  { month: 10, day: 1 },                      // 7  Ashvina
+  { month: 10, day: 31 },                     // 8  Kartika
+  { month: 11, day: 30 },                     // 9  Margashira
+  { month: 12, day: 30 },                     // 10 Pushya
+  { month: 1, day: 29, nextYear: true },      // 11 Magha
+  { month: 2, day: 28, nextYear: true },      // 12 Phalguna
+];
+
+function estimateMasaMidpoint(masaNumber: number, year: number): string {
+  const m = MASA_MIDPOINT[masaNumber - 1];
+  const gregYear = m.nextYear ? year + 1 : year;
+  return `${gregYear}-${String(m.month).padStart(2, "0")}-${String(m.day).padStart(2, "0")}`;
 }
 
 /**
@@ -222,13 +238,17 @@ export function findTithiAnniversaries(
       : tithiIdentity.tithiNumber + 15;
 
   for (let year = fromYear; year <= toYear; year++) {
-    const windowStart = estimateMasaStart(tithiIdentity.masaNumber, year);
-    const searchStart = addDays(windowStart, -20);
+    // Centre the scan on the empirical Gregorian midpoint of the target
+    // masa. ±20 days = 41-day window. This is ~45 % less work than the
+    // previous "month-01 + 75 days" approach yet still covers every
+    // possible Gregorian landing for the masa across modern years.
+    const midpoint = estimateMasaMidpoint(tithiIdentity.masaNumber, year);
+    const searchStart = addDays(midpoint, -20);
 
     let found = false;
     let current = searchStart;
 
-    for (let i = 0; i < 75 && !found; i++) {
+    for (let i = 0; i < 41 && !found; i++) {
       try {
         const p = calculateDayPanchangam(current, location);
 

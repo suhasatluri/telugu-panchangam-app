@@ -3,6 +3,7 @@ export const runtime = "edge";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getTithiForDate, findTithiAnniversaries } from "@/engine/reminders";
+import { getKV } from "@/lib/cloudflare";
 
 const querySchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -47,8 +48,31 @@ export async function GET(request: NextRequest) {
   const now = new Date();
   const currentYear = now.getFullYear();
   const fromYear = parsed.data.from_year ?? currentYear;
-  const toYear = parsed.data.to_year ?? currentYear + 9;
+  // Default span reduced from 10 → 5 years so a first uncached request
+  // fits inside the Cloudflare edge CPU budget. Users can still pick
+  // 10/15/25 from the dropdown — those hits will rely on KV cache below.
+  const toYear = parsed.data.to_year ?? currentYear + 4;
   const todayDate = `${currentYear}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
+  // KV cache key — anniversary Tithis for a given (date, origin, span)
+  // do not change, so we can cache aggressively.
+  const cacheKey =
+    `anniversary:${date}:${origin_lat.toFixed(3)}:${origin_lng.toFixed(3)}` +
+    `:${lat.toFixed(3)}:${lng.toFixed(3)}:${fromYear}:${toYear}`;
+
+  const kv = getKV();
+  if (kv) {
+    try {
+      const cached = await kv.get(cacheKey);
+      if (cached) {
+        return NextResponse.json(JSON.parse(cached), {
+          headers: { ...CORS_HEADERS, "X-Cache": "HIT" },
+        });
+      }
+    } catch {
+      // ignore cache read failures
+    }
+  }
 
   try {
     const tithiIdentity = getTithiForDate(date, origin_lat, origin_lng, origin_tz);
@@ -56,16 +80,26 @@ export async function GET(request: NextRequest) {
       tithiIdentity, fromYear, toYear, lat, lng, tz, todayDate
     );
 
-    return NextResponse.json(
-      {
-        data: {
-          tithiIdentity,
-          occurrences,
-          originalDate: date,
-        },
+    const payload = {
+      data: {
+        tithiIdentity,
+        occurrences,
+        originalDate: date,
       },
-      { headers: CORS_HEADERS }
-    );
+    };
+
+    // Write-through cache (24 h) — best-effort, never blocks the response
+    if (kv) {
+      try {
+        await kv.put(cacheKey, JSON.stringify(payload), { expirationTtl: 86400 });
+      } catch {
+        // ignore cache write failures
+      }
+    }
+
+    return NextResponse.json(payload, {
+      headers: { ...CORS_HEADERS, "X-Cache": "MISS" },
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(
