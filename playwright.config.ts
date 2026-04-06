@@ -1,5 +1,16 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// All projects use chromium so CI only needs `playwright install chromium`.
+// We deliberately do NOT spread devices['iPhone …'] / devices['iPad …']
+// because those descriptors switch the engine to webkit and would require
+// `playwright install webkit` in CI as well.
+const mobileChromium = {
+  ...devices["Desktop Chrome"],
+  isMobile: true,
+  hasTouch: true,
+  defaultBrowserType: "chromium" as const,
+};
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -13,35 +24,24 @@ export default defineConfig({
   projects: [
     {
       name: "Mobile Chrome (375px)",
-      use: {
-        ...devices["Pixel 5"],
-        viewport: { width: 375, height: 812 },
-      },
+      use: { ...mobileChromium, viewport: { width: 375, height: 812 } },
     },
     {
       name: "Mobile Chrome (390px)",
-      use: {
-        ...devices["iPhone 14"],
-        viewport: { width: 390, height: 844 },
-      },
+      use: { ...mobileChromium, viewport: { width: 390, height: 844 } },
     },
     {
       name: "Mobile Large (430px)",
-      use: {
-        ...devices["iPhone 14 Plus"],
-        viewport: { width: 430, height: 932 },
-      },
+      use: { ...mobileChromium, viewport: { width: 430, height: 932 } },
     },
     {
       name: "Tablet (768px)",
-      use: {
-        ...devices["iPad Mini"],
-        viewport: { width: 768, height: 1024 },
-      },
+      use: { ...mobileChromium, viewport: { width: 768, height: 1024 } },
     },
     {
       name: "Desktop (1280px)",
       use: {
+        ...devices["Desktop Chrome"],
         viewport: { width: 1280, height: 800 },
       },
     },
