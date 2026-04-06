@@ -1,4 +1,5 @@
 import type { DayPanchangam, Festival } from "./types";
+import { getSignificantEkadashi } from "./significantEkadashis";
 
 /**
  * Match festivals for a single day based on its panchangam data.
@@ -121,15 +122,27 @@ export function matchFestivalsForDay(p: DayPanchangam): Festival[] {
     }
   }
 
-  // Generic Ekadashi
+  // Ekadashi — significant ones get special name + tier 1 + significance text
   if (p.tithi.number === 11 || p.tithi.number === 26) {
-    const pakshaLabel = p.paksha.value === "shukla" ? "Shukla" : "Krishna";
-    festivals.push({
-      te: "ఏకాదశి",
-      en: `${pakshaLabel} Ekadashi`,
-      type: "tithi",
-      tier: 1,
-    });
+    const significant = getSignificantEkadashi(p.masa.number, p.paksha.value);
+    if (significant) {
+      festivals.push({
+        te: significant.te,
+        en: significant.en,
+        type: "tithi",
+        tier: 1,
+        isSignificantEkadashi: true,
+        significance: significant.significance,
+      });
+    } else {
+      const pakshaLabel = p.paksha.value === "shukla" ? "Shukla" : "Krishna";
+      festivals.push({
+        te: "ఏకాదశి",
+        en: `${pakshaLabel} Ekadashi`,
+        type: "tithi",
+        tier: 2,
+      });
+    }
   }
 
   // Amavasya (if not already Deepavali which is also Amavasya)

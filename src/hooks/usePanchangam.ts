@@ -61,7 +61,13 @@ interface MonthDaySummary {
   paksha: "shukla" | "krishna";
   moonPhaseEmoji: string;
   moonPhase: { illuminationPercent: number; phase: number };
-  festivals: Array<{ te: string; en: string; tier: 1 | 2 | 3 }>;
+  festivals: Array<{
+    te: string;
+    en: string;
+    tier: 1 | 2 | 3;
+    isSignificantEkadashi?: boolean;
+    significance?: { te: string; en: string };
+  }>;
   isEkadashi: boolean;
   isAmavasya: boolean;
   isPurnima: boolean;

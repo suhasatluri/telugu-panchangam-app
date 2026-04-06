@@ -20,6 +20,10 @@ export interface Festival {
   type: "tithi" | "solar" | "lookup" | "fixed";
   tier: 1 | 2 | 3;
   description?: { en: string };
+  /** True for the four most sacred Ekadashis (Vaikunta, Nirjala, Devshayani, Prabodhini) */
+  isSignificantEkadashi?: boolean;
+  /** Bilingual explanation shown for significant Ekadashis */
+  significance?: { te: string; en: string };
 }
 
 /** Complete single-day Panchangam */

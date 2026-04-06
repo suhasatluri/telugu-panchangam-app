@@ -17,7 +17,12 @@ interface DaySummary {
   nakshatra: { te: string; en: string; number: number };
   paksha: "shukla" | "krishna";
   moonPhaseEmoji: string;
-  festivals: Array<{ te: string; en: string; tier: 1 | 2 | 3 }>;
+  festivals: Array<{
+    te: string;
+    en: string;
+    tier: 1 | 2 | 3;
+    isSignificantEkadashi?: boolean;
+  }>;
   isEkadashi: boolean;
   isAmavasya: boolean;
   isPurnima: boolean;
@@ -136,14 +141,17 @@ export default function CalendarGrid({
               {hasFestival && (
                 <div className="mt-0.5 space-y-0.5">
                   {day.festivals.slice(0, 2).map((f, fi) => {
-                    const dotColor =
-                      f.tier === 1
+                    const isSig = f.isSignificantEkadashi;
+                    const dotColor = isSig
+                      ? "bg-gold"
+                      : f.tier === 1
                         ? "bg-gold"
                         : f.tier === 2
                           ? "bg-accent"
                           : "bg-label/40";
-                    const textColor =
-                      f.tier === 1
+                    const textColor = isSig
+                      ? "text-gold font-bold"
+                      : f.tier === 1
                         ? "text-gold"
                         : f.tier === 2
                           ? "text-accent"
@@ -158,6 +166,7 @@ export default function CalendarGrid({
                             lang === "te" ? "font-noto-telugu" : "font-lora"
                           }`}
                         >
+                          {isSig ? "✨ " : ""}
                           {lang === "te" ? f.te : f.en}
                         </span>
                       </div>

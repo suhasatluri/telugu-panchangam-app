@@ -1,5 +1,6 @@
 import { calculateDayPanchangam } from "./panchangam";
 import type { Festival, Location } from "./types";
+import { getSignificantEkadashi } from "./significantEkadashis";
 
 // ─────────────────────────────────────────────
 // Helpers
@@ -364,13 +365,26 @@ function getRecurringFestivals(
     if ((p.tithi.number === 11 || p.tithi.number === 26) && !seenEkadashi.has(date)) {
       seenEkadashi.add(date);
       const pakshaLabel = p.paksha.value === "shukla" ? "Shukla" : "Krishna";
-      festivals.push({
-        date,
-        te: `${p.masa.te} ${p.paksha.te.replace(" పక్షం", "")} ఏకాదశి`,
-        en: `${p.masa.en} ${pakshaLabel} Ekadashi`,
-        type: "tithi",
-        tier: 1,
-      });
+      const significant = getSignificantEkadashi(p.masa.number, p.paksha.value);
+      if (significant) {
+        festivals.push({
+          date,
+          te: significant.te,
+          en: significant.en,
+          type: "tithi",
+          tier: 1,
+          isSignificantEkadashi: true,
+          significance: significant.significance,
+        });
+      } else {
+        festivals.push({
+          date,
+          te: `${p.masa.te} ${p.paksha.te.replace(" పక్షం", "")} ఏకాదశి`,
+          en: `${p.masa.en} ${pakshaLabel} Ekadashi`,
+          type: "tithi",
+          tier: 2,
+        });
+      }
     }
 
     // Amavasya: tithi 30

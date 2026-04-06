@@ -284,7 +284,8 @@ export default function FestivalTracker() {
                   const daysAway = f.date ? daysBetween(today, f.date) : 0;
 
                   let borderClass = "border-transparent";
-                  if (isToday) borderClass = "border-gold border-2";
+                  if (f.isSignificantEkadashi) borderClass = "border-l-4 border-l-gold border-gold/30 bg-gold/5";
+                  else if (isToday) borderClass = "border-gold border-2";
                   else if (isNext) borderClass = "border-accent/30";
 
                   const tierBadge =
@@ -313,11 +314,22 @@ export default function FestivalTracker() {
                         </span>
                       </div>
                       <p className="font-noto-telugu text-lg text-text-primary mt-1">
+                        {f.isSignificantEkadashi ? "✨ " : ""}
                         {f.te}
+                        {f.isSignificantEkadashi && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-gold bg-gold/10 px-2 py-0.5 rounded-full ml-2 align-middle font-lora">
+                            {lang === "te" ? "విశేష ఏకాదశి" : "Significant"}
+                          </span>
+                        )}
                       </p>
                       <p className="font-playfair italic text-text-secondary text-sm">
                         {f.en}
                       </p>
+                      {f.isSignificantEkadashi && f.significance && (
+                        <p className={`text-sm text-text-secondary italic mt-2 leading-relaxed ${lang === "te" ? "font-noto-telugu" : "font-lora"}`}>
+                          {f.significance[lang]}
+                        </p>
+                      )}
                       {!isPast && f.date && daysAway > 0 && (
                         <p className="text-xs text-auspicious mt-1 font-lora">
                           {lang === "te"

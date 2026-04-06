@@ -253,6 +253,29 @@ export default function DayDetail({ data }: DayDetailProps) {
               </span>
             ))}
           </div>
+
+          {data.festivals
+            .filter((f) => f.isSignificantEkadashi && f.significance)
+            .map((f) => (
+              <div
+                key={`sig-${f.en}`}
+                className="mt-3 p-4 rounded-lg bg-gold/[0.08] border border-gold/30"
+              >
+                <div className="font-noto-telugu font-bold text-gold text-base mb-1">
+                  ✨ {f.te}
+                </div>
+                <div className="font-playfair italic text-text-secondary text-sm mb-2">
+                  {f.en}
+                </div>
+                {f.significance && (
+                  <p
+                    className={`text-sm text-text-secondary leading-relaxed ${lang === "te" ? "font-noto-telugu" : "font-lora"}`}
+                  >
+                    {f.significance[lang]}
+                  </p>
+                )}
+              </div>
+            ))}
         </section>
       )}
     </div>

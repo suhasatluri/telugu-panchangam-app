@@ -112,3 +112,63 @@ describe("getFestivalsForYear", () => {
     expect(ramNavami?.date).toBe("2026-03-27");
   });
 });
+
+describe("Significant Ekadashi detection", () => {
+  let festivals2026: ReturnType<typeof getFestivalsForYear>;
+
+  beforeAll(() => {
+    festivals2026 = getFestivalsForYear(2026, hyderabad.lat, hyderabad.lng, hyderabad.tz);
+  }, 120000);
+
+  it("marks Vaikunta Ekadashi as significant", () => {
+    const vaikunta = festivals2026.find((f) => f.en.includes("Vaikunta"));
+    expect(vaikunta).toBeDefined();
+    expect(vaikunta?.isSignificantEkadashi).toBe(true);
+    expect(vaikunta?.tier).toBe(1);
+    expect(vaikunta?.significance?.en).toContain("most sacred");
+    expect(vaikunta?.significance?.te).toBeTruthy();
+  });
+
+  it("marks Nirjala Ekadashi as significant", () => {
+    const nirjala = festivals2026.find((f) => f.en.includes("Nirjala"));
+    expect(nirjala).toBeDefined();
+    expect(nirjala?.isSignificantEkadashi).toBe(true);
+    expect(nirjala?.tier).toBe(1);
+    expect(nirjala?.significance?.en.toLowerCase()).toContain("water");
+  });
+
+  it("marks Devshayani Ekadashi as significant", () => {
+    const devshayani = festivals2026.find((f) => f.en.includes("Devshayani"));
+    expect(devshayani).toBeDefined();
+    expect(devshayani?.isSignificantEkadashi).toBe(true);
+    expect(devshayani?.tier).toBe(1);
+  });
+
+  it("marks Prabodhini Ekadashi as significant", () => {
+    const prabodhini = festivals2026.find((f) => f.en.includes("Prabodhini"));
+    expect(prabodhini).toBeDefined();
+    expect(prabodhini?.isSignificantEkadashi).toBe(true);
+    expect(prabodhini?.tier).toBe(1);
+  });
+
+  it("regular Ekadashis are not marked significant and are tier 2", () => {
+    const regular = festivals2026.filter(
+      (f) => f.en.includes("Ekadashi") && !f.isSignificantEkadashi
+    );
+    expect(regular.length).toBeGreaterThan(15);
+    regular.forEach((e) => {
+      expect(e.tier).toBe(2);
+    });
+  });
+
+  it("significant Ekadashis have bilingual names and significance", () => {
+    const significant = festivals2026.filter((f) => f.isSignificantEkadashi);
+    expect(significant.length).toBeGreaterThanOrEqual(1);
+    significant.forEach((f) => {
+      expect(f.te).toBeTruthy();
+      expect(f.en).toBeTruthy();
+      expect(f.significance?.te).toBeTruthy();
+      expect(f.significance?.en).toBeTruthy();
+    });
+  });
+});

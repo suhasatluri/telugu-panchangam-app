@@ -59,6 +59,10 @@ export const TOOLTIPS: Record<string, { en: string; te: string }> = {
     en: "Inauspicious — an unfavourable quality. Best to avoid starting new things.",
     te: "అశుభం — ప్రతికూలమైన గుణం. కొత్త పనులు మొదలుపెట్టడం మానుకోండి.",
   },
+  ekadashi: {
+    en: "A lunar day of fasting observed by Vishnu devotees — the 11th Tithi of each fortnight. There are 24 Ekadashis per year. Some are especially sacred: Vaikunta Ekadashi (most important), Nirjala Ekadashi (most austere), Devshayani and Prabodhini Ekadashi.",
+    te: "విష్ణు భక్తులు ఉపవాసం ఉండే తిథి — ప్రతి పక్షంలో 11వ తిథి. సంవత్సరంలో 24 ఏకాదశులు వస్తాయి. కొన్ని విశేషమైనవి: వైకుంఠ ఏకాదశి, నిర్జలా ఏకాదశి, దేవశయని మరియు ప్రబోధిని ఏకాదశి.",
+  },
   calendar: {
     en: "Each day shows the Tithi at sunrise. Tap any day to see the full Panchangam.",
     te: "ప్రతి రోజు సూర్యోదయంలో తిథిని చూపిస్తుంది. పూర్తి పంచాంగం చూడటానికి ఏదైనా రోజు నొక్కండి.",
